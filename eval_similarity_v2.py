@@ -10,7 +10,19 @@ import argparse
 import re
 import os
 import logging
+import yaml
 
+# Config settings file  ----------------
+yaml_bertmodels_path = f'./configs/bert_models.yaml'
+def load_yaml(file_path):
+    with open(file_path, 'r') as file:
+        try:
+            data = yaml.safe_load(file)
+            return data
+        except yaml.YAMLError as exc:
+            print(f"Error loading YAML file: {exc}")
+            return None
+bertmodels_yaml = load_yaml(yaml_bertmodels_path)
 #-- Cálculo da similaridade ----------------------------------------------
 
 #- Cálculo da similaridade entre dúas oracións ----------------------------------------------
@@ -33,28 +45,28 @@ def cosine_score(tokenizer, model, sentence1, sentence2):
     similarity_score = 1 - cosine(embeddings1, embeddings2)
     return similarity_score
 
-def mover_score(generation, reference):
-    os.environ['MOVERSCORE_MODEL'] = "marcosgg/bert-base-gl-cased"
+def mover_score(task,generation, reference):
+    os.environ['MOVERSCORE_MODEL'] = bertmodels_yaml[task.lang]
     from moverscore_v2 import sentence_score
 
     moverscore = sentence_score(generation, [reference], trace=False)
     return moverscore
 
-def compute_sentence_similarity(metric, tokenizer, model, sentence1, sentence2):
+def compute_sentence_similarity(task,metric, tokenizer, model, sentence1, sentence2):
 
     if metric == "cosine":
         return cosine_score(tokenizer, model, sentence1, sentence2)
     elif metric == "moverscore":
-        return mover_score(sentence1, sentence2)
+        return mover_score(task,sentence1, sentence2)
     else:
         raise NotImplementedError
 
 #- Cálculo da similaridade entre dous corpus de oracións ----------------------------------------------
-def bert_score(generations, references, print_results=False):
+def bert_score(task,generations, references, print_results=False):
     logging.info(f"Evaluating BERT Score...")
     bertscore = evaluate.load("bertscore")
     bertscore_results = bertscore.compute(predictions=generations, references=references, 
-                                model_type= "marcosgg/bert-base-gl-cased", idf=True, num_layers = 11, lang="gl")
+                                model_type= bertmodels_yaml[task.lang], idf=True, num_layers = 11, lang="gl")
     if print_results:
         for i in range(len(generations)):
             print(f'Reference {i}: {references[i]}')
@@ -64,9 +76,9 @@ def bert_score(generations, references, print_results=False):
     logging.info(f'Global Bert Score: [precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]')
     print(f'-----------------------')
     
-def compute_corpus_similarity(metric, generations, references):
+def compute_corpus_similarity(task, metric, generations, references):
     if metric == "bertscore":
-        return bert_score(generations, references)
+        return bert_score(task, generations, references)
     else:
         raise NotImplementedError
 
@@ -95,7 +107,7 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
         print(f"ID  {i} - Generated answer: {generated_answer}")
         j=1
         for original_answer in original_options:
-            similarity = compute_sentence_similarity(metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
+            similarity = compute_sentence_similarity(task,metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
             answer_similarities.append(similarity)
             if original_answer == correct_option:
                 correct_similarities.append(similarity)
@@ -126,9 +138,9 @@ def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examp
 
     logging.info(f"--{metric.upper()} RESULTS----------------")
     print(f"Similarity with correct options---------------------")
-    compute_corpus_similarity(metric, generated_answer, correct_options)
+    compute_corpus_similarity(task, metric, generated_answer, correct_options)
     print(f"Similarity with all options------------------------")
-    compute_corpus_similarity(metric, generated_answer, original_options)
+    compute_corpus_similarity(task, metric, generated_answer, original_options)
     print(f"---------------------------------")
 
 def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):

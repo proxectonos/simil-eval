@@ -3,3 +3,4 @@ generated_files/*
 logs_similarity/*
 logs_surprisal/*
 texts/*
+configs/.env
