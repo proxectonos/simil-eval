@@ -135,15 +135,15 @@ def avaliate_cola(lang,model_scorer, model_name, cache_dir):
 
 def test():
     print("Test function")
-    dataset = load_dataset("proxectonos/galcola", cache_dir = cache_dir)["test"]
+    dataset = load_dataset("proxectonos/galcola")["test"]
     print(dataset)
 
     # Filter the dataset based on the feature label
     dataset_bad = [item['sentence'] for item in dataset if item['label'] == 0]
     dataset_good = [item['sentence'] for item in dataset if item['label'] == 1]
 
-    print("Dataset with label 0:", dataset_0)
-    print("Dataset with label 1:", dataset_1)
+    print("Dataset with label 0:", dataset_bad)
+    print("Dataset with label 1:", dataset_good)
     return
 
 if __name__ == "__main__":

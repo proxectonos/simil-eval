@@ -51,7 +51,7 @@ def compute_sentence_similarity(metric, tokenizer, model, sentence1, sentence2):
 
 #- Cálculo da similaridade entre dous corpus de oracións ----------------------------------------------
 def bert_score(generations, references, print_results=False):
-    logging.info(f"Avaliando BERT Score...")
+    logging.info(f"Evaluating BERT Score...")
     bertscore = evaluate.load("bertscore")
     bertscore_results = bertscore.compute(predictions=generations, references=references, 
                                 model_type= "marcosgg/bert-base-gl-cased", idf=True, num_layers = 11, lang="gl")
