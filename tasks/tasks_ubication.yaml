@@ -1,0 +1,13 @@
+openbookqa:
+  - gl: proxectonos/openbookqa_gl
+  - en: cnut1648/openbookqa_retrieved_by_colbert
+  - cat: projecte-aina/openbookqa_ca
+  - es: BSC-LT/openbookqa-es
+  - pt: None
+
+belebele:
+  - gl: proxectonos/belebele_gl
+  - en: [facebook/belebele,eng_Latn]
+  - cat: [facebook/belebele,cat_Latn]
+  - es: [facebook/belebele,spa_Latn]
+  - pt: [facebook/belebele,por_Latn]
