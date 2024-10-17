@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Load the environment variables from the .env file
+if [ -f ./configs/.env ]; then
+    export $(cat .env | xargs)
+fi
+
+if [ -z "$HF_TOKEN" ]; then
+    echo "HF_TOKEN is not set. Please set it in the .env file, or maybe some models or datasets couldn't work correctly"
+fi
 #MODELS -----------------------------------------------------------------
 MODELS=(
 # "proxectonos/Carballo-cerebras-1.3B"
