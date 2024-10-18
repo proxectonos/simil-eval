@@ -2,14 +2,14 @@
 
 #SBATCH -D .
 #SBATCH -N 1
-#SBATCH -J NOS-CabuxaLlama-Minicons-CoLA
+#SBATCH -J NOS-Experimento1-Minicons-CoLA
 #SBATCH --mem=70G
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=32
-#SBATCH -o ../logs_surprisal/CabuxaLlama_Cola_GL_EN_CAT_ES_%j.out
-#SBATCH -e ../logs_surprisal/CabuxaLlama_Cola_GL_EN_CAT_ES_%j.err
-#SBATCH -t 20:00
+#SBATCH -o ../logs_surprisal/Experimento1_Cola_GL_EN_CAT_ES_%j.out
+#SBATCH -e ../logs_surprisal/Experimento1_Cola_GL_EN_CAT_ES_%j.err
+#SBATCH -t 30:00
 
 cd ..
 
@@ -35,7 +35,8 @@ declare -a MODELS=(
     #"utter-project/EuroLLM-1.7B"
     #"proxectonos/Carballo_Llama_Test"
     #"catallama/CataLlama-v0.1-Base"
-    "irlab-udc/Llama-3.1-8B-Instruct-Galician"
+    #"irlab-udc/Llama-3.1-8B-Instruct-Galician"
+    "/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
 )
 
 echo "Launching minicons test for Galician------------------"

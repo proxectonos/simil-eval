@@ -14,11 +14,12 @@ MODELS=(
 #"proxectonos/Carballo-bloom-1.3B"
 # "Nos-PT/Carvalho_pt-gl-1.3B"
 # "projecte-aina/FLOR-1.3B"
- "bigscience/bloom-1b1"
+#"bigscience/bloom-1b1"
 #"bigscience/bloom-1b7"
 #"ai-forever/mGPT"
 # "google/gemma-2b"
 # "NOVA-vision-language/GlorIA-1.3B"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
 )
 
 #DATASETS -----------------------------------------------------------------
@@ -28,7 +29,7 @@ DATASETS=(
 )
 
 LANGUAGES=(
-    #"gl"
+    "gl"
     #"cat"
     "en"
     #"es"
