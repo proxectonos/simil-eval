@@ -13,8 +13,20 @@
 
 cd ..
 
-CACHE_DIR="/mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/similaridade_framework/cache"
-TOKEN="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"
+# Load the environment variables from the .env file
+if [ -f ./configs/.env ]; then
+    export $(cat ./configs/.env | xargs)
+fi
+
+if [ -z "$HF_TOKEN" ]; then
+    echo "HF_TOKEN is not set. Please set it in the .env file, or maybe some models or datasets couldn't work correctly"
+fi
+
+if [ -z "$CACHE_DIR" ]; then
+    echo "CACHE_DIR is not set. Please set it in the .env file"
+    exit
+fi
+#------------------------------------------------------------
 
 declare -a MODELS=(
     # "proxectonos/Carballo-cerebras-1.3B" 
@@ -41,20 +53,20 @@ declare -a MODELS=(
 
 echo "Launching minicons test for Galician------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang gl --token $TOKEN
+    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang gl --token $HF_TOKEN
 done
 
 echo "Launching minicons test for English------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang en --token $TOKEN
+    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang en --token $HF_TOKEN
 done
 
 echo "Launching minicons test for Catalan------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang cat --token $TOKEN
+    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang cat --token $HF_TOKEN
 done
 
 echo "Launching minicons test for Spanish------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang es --token $TOKEN
+    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang es --token $HF_TOKEN
 done

@@ -2,19 +2,31 @@
 
 #SBATCH -D .
 #SBATCH -N 1
-#SBATCH -J NOS-CabuxaLlama-Calame
+#SBATCH -J NOS-Experimento1-Calame
 #SBATCH --mem=70G
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=32
-#SBATCH -o ../logs_surprisal/CabuxaLlama_Minicons_Calame-PT_%j.out
-#SBATCH -e ../logs_surprisal/CabuxaLlama_Minicons_Calame-PT_%j.err
+#SBATCH -o ../logs_surprisal/Experimento1_Minicons_Calame-PT_%j.out
+#SBATCH -e ../logs_surprisal/Experimento1_Minicons_Calame-PT_%j.err
 #SBATCH -t 1:00:00
 
 cd ..
 
-CACHE_DIR="/mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/similaridade_framework/cache"
+# Load the environment variables from the .env file
+if [ -f ./configs/.env ]; then
+    export $(cat ./configs/.env | xargs)
+fi
 
+if [ -z "$HF_TOKEN" ]; then
+    echo "HF_TOKEN is not set. Please set it in the .env file, or maybe some models or datasets couldn't work correctly"
+fi
+
+if [ -z "$CACHE_DIR" ]; then
+    echo "CACHE_DIR is not set. Please set it in the .env file"
+    exit
+fi
+#------------------------------------------------------------
 declare -a MODELS=(
     # "proxectonos/Carballo-cerebras-1.3B" 
     # "proxectonos/Carballo-bloom-1.3B" 
@@ -33,7 +45,8 @@ declare -a MODELS=(
     #"BSC-LT/salamandra-7b"
     #"utter-project/EuroLLM-1.7B"
     #"proxectonos/Carballo_Llama_Test"
-    "irlab-udc/Llama-3.1-8B-Instruct-Galician"
+    #"irlab-udc/Llama-3.1-8B-Instruct-Galician"
+    "/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
 )
 
 echo "Launching minicons test for Calame-PT------------------"
@@ -41,7 +54,7 @@ for model in "${MODELS[@]}"; do
     python3 eval_minicons.py \
         --model $model \
         --cache $CACHE_DIR \
-        --token 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 \
+        --token $HF_TOKEN \
         --dataset calame \
         --lang pt
 done
