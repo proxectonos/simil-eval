@@ -37,7 +37,7 @@ python3 eval_similarity_v2.py \
     --language $LANGUAGE \
     --evaluate_similarity \
     --create_examples \
-    --fewshot_num 5 \
+    --fewshot_num $FEWSHOT_NUM \
     --show_options $SHOW_OPTIONS \
     --examples_file $EXAMPLES_FILE \
     --generate_answers \
