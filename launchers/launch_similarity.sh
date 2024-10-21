@@ -51,7 +51,7 @@ for dataset in "${DATASETS[@]}";do
     for language in "${LANGUAGES[@]}"; do
         for model in "${MODELS[@]}"; do
             #modelname=${model##*/}
-            modename="Experimento1"
+            modelname="Experimento1"
             job_name="similarity_${date}_${modelname}_${dataset}_${language}_${FEWSHOT_NUM}fewshot_${SHOW_OPTIONS}options"
             echo "Launching job $job_name"
             sbatch -J "$job_name" launch_task.sh $model $dataset $language $SHOW_OPTIONS $FEWSHOT_NUM $CACHE_DIR $HF_TOKEN
