@@ -1,3 +1,9 @@
+#------------------------------------------------------------------------------------------------------------
+## MOVERSCORE: Text Generation Evaluating with Contextualized Embeddings and Earth Mover Distance
+## Code from the repository https://github.com/AIPHES/emnlp19-moverscore
+## This file has minimal modifications to adapt to actual packages versions
+## The paper that motivate this code is avaliable in https://arxiv.org/pdf/1909.02622
+#------------------------------------------------------------------------------------------------------------
 from __future__ import absolute_import, division, print_function
 import numpy as np
 import torch
@@ -161,8 +167,8 @@ def word_mover_score(refs, hyps, idf_dict_ref, idf_dict_hyp, stop_words=[], n_gr
         distance_matrix = batched_cdist_l2(raw, raw).double().cpu().numpy()
                 
         for i in range(batch_size):  
-            c1 = np.zeros(raw.shape[1], dtype=np.float32)
-            c2 = np.zeros(raw.shape[1], dtype=np.float32)
+            c1 = np.zeros(raw.shape[1], dtype=np.float64)
+            c2 = np.zeros(raw.shape[1], dtype=np.float64)
             c1[:len(ref_idf[i])] = ref_idf[i]
             c2[len(ref_idf[i]):] = hyp_idf[i]
             

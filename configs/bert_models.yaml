@@ -1,5 +1,5 @@
 gl: marcosgg/bert-base-gl-cased
-en: distilbert/distilbert-base-uncased
+en: google-bert/bert-base-uncased
 pt: PORTULAN/albertina-900m-portuguese-ptpt-encoder
 es: PlanTL-GOB-ES/roberta-base-bne
 cat: projecte-aina/roberta-base-ca-v2
