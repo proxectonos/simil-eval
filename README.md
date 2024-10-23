@@ -1,11 +1,14 @@
 # Framework de similaridade
 Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 
+> [!NOTE]  
+> Agora mesmo a feramenta está pensada para instalarse e utilizarse no Cesga. Próximamente haberá versión para o servidor.
+
 ## Setup
 
 1.  Instalar o entorno de avaliación (python 3.9)
-    1.  python -m venv eval_env
-    2.  pip install -R requirements.txt
+    1.  ```python -m venv eval_env```
+    2.  ```pip install -R requirements.txt```
 2.  Modificar no ficheiro ```./configs/.env``` as variables de entorno.
 
 ## Cómo facer avaliacións de coseno/moverscore/bertscore (datasets QA)
