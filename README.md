@@ -44,11 +44,21 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 - **Capacidades xerativas**:
   - *Calame*: Dase un fragmento textual e pídese completar a última palabra. Está construído de tal forma que esta última palabra debería ser única, e mírase se coincide a xerada polo modelo coa que se proporciona de referencia no dataset para cada fragmento.
 
-### Métricas x Dataset
+### Métricas empregadas por dataset
 
 |            |       Coseno       |     MoverScore     |      BertScore     |      Surprisal     |
 |------------|:------------------:|:------------------:|:------------------:|:------------------:|
 | OpenBookQA | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
 |  Belebele  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
+|   CoLA     |                    |                    |                    | :heavy_check_mark: |
 |   Calame   |                    |                    |                    | :heavy_check_mark: |
-|    CoLA    |                    |                    |                    | :heavy_check_mark: |
+
+### Datasets e linguas
+
+|            |                                   Galego                                   |                                         Inglés                                         |                                         Catalán                                        |                                         Español                                        | Portugués                                                                              |
+|------------|:--------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|----------------------------------------------------------------------------------------|
+| OpenBookQA | [openbookqa_gl](https://huggingface.co/datasets/proxectonos/openbookqa_gl) | [openbookqa](https://huggingface.co/datasets/cnut1648/openbookqa_retrieved_by_colbert) | [openbookqa_ca](https://huggingface.co/datasets/projecte-aina/openbookqa_ca)           | [openbookqa_es](https://huggingface.co/datasets/BSC-LT/openbookqa-es)                  | Pendente                                                                               |
+| Belebele   | [belebele_gl](https://huggingface.co/datasets/proxectonos/belebele_gl)     | [belebele_eng_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/eng_Latn) | [belebele_cat_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/cat_Latn) | [belebele_spa_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/spa_Latn) | [belebele_por_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/por_Latn) |
+| CoLA       | [galcola](https://huggingface.co/datasets/proxectonos/galcola)             | [glue_cola](https://huggingface.co/datasets/nyu-mll/glue/viewer/cola)                  | [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA)                                | [EsCoLA](https://huggingface.co/datasets/nbel/EsCoLA)                                  |                                                                                        |
+| Calame     |                                                                            |                                                                                        |                                                                                        |                                                                                        | [calame-pt](https://huggingface.co/datasets/NOVA-vision-language/calame-pt)            |
+
