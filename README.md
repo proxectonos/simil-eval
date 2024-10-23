@@ -1,4 +1,4 @@
-# similaridade_framework
+# Framework de similaridade
 Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 
 ## Setup
@@ -25,3 +25,27 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 4.  Lanzar mediante ```sbatch`` ás colas do Cesga:
    -    **CoLA**: ```sbatch launch_CoLA```: Obtéñense resultados para as versións do CoLA en galego, catalán, español e inglés.
    -    **Calame**: ```sbatch launch_Calame.sh```: Obtéñense resultados para Calame-PT (pendente Calame-GL).
+
+## Características da ferramenta
+
+### Métricas
+
+- **Coseno**:
+- **MoverScore**:
+- **BertScore**:
+- **Surprisal**:
+
+### Datasets
+- **Belebele**:
+- **OpenBookQA**:
+- **Calame**:
+- **Cola**:
+
+### Resumo
+
+|            |       Coseno       |     MoverScore     |      BertScore     |      surprisal     |
+|------------|:------------------:|:------------------:|:------------------:|:------------------:|
+| OpenBookQA | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
+|  Belebele  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
+|   Calame   |                    |                    |                    | :heavy_check_mark: |
+|    Cola    |                    |                    |                    | :heavy_check_mark: |
