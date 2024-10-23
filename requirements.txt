@@ -1,0 +1,12 @@
+transformers
+datasets
+tokenizers
+sentencepiece
+evaluate
+scikit-learn
+pandas
+minicons
+bert-score
+pyemd
+sacrebleu
+

@@ -11,22 +11,6 @@
 #SBATCH -e ../logs_surprisal/Experimento1_Minicons_Calame-PT_%j.err
 #SBATCH -t 1:00:00
 
-cd ..
-
-# Load the environment variables from the .env file
-if [ -f ./configs/.env ]; then
-    export $(cat ./configs/.env | xargs)
-fi
-
-if [ -z "$HF_TOKEN" ]; then
-    echo "HF_TOKEN is not set. Please set it in the .env file, or maybe some models or datasets couldn't work correctly"
-fi
-
-if [ -z "$CACHE_DIR" ]; then
-    echo "CACHE_DIR is not set. Please set it in the .env file"
-    exit
-fi
-#------------------------------------------------------------
 declare -a MODELS=(
     # "proxectonos/Carballo-cerebras-1.3B" 
     # "proxectonos/Carballo-bloom-1.3B" 
@@ -48,6 +32,23 @@ declare -a MODELS=(
     #"irlab-udc/Llama-3.1-8B-Instruct-Galician"
     "/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
 )
+
+cd ..
+
+# Load the environment variables from the .env file
+if [ -f ./configs/.env ]; then
+    export $(cat ./configs/.env | xargs)
+fi
+
+if [ -z "$HF_TOKEN" ]; then
+    echo "HF_TOKEN is not set. Please set it in the .env file, or maybe some models or datasets couldn't work correctly"
+fi
+
+if [ -z "$CACHE_DIR" ]; then
+    echo "CACHE_DIR is not set. Please set it in the .env file"
+    exit
+fi
+#------------------------------------------------------------
 
 echo "Launching minicons test for Calame-PT------------------"
 for model in "${MODELS[@]}"; do
