@@ -3,7 +3,9 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 
 ## Setup
 
-1.  Instalar o entorno de avaliación (pendente)
+1.  Instalar o entorno de avaliación (python 3.9)
+    1.  python -m venv eval_env
+    2.  pip install -R requirements.txt
 2.  Modificar no ficheiro ```./configs/.env``` as variables de entorno.
 
 ## Cómo facer avaliacións de coseno/moverscore/bertscore (datasets QA)
@@ -31,9 +33,9 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 ### Métricas
 
 - **Coseno**: Calcúlase o coseno entre os embeddings da última capa asociados a dous fragmentos textuais. Por exemplo, o coseno entre unha xeración do modelo e un fragmento de referencia ao cal debería parecerse.
-- **MoverScore**\[[*código*](https://github.com/AIPHES/emnlp19-moverscore),[*paper*](https://arxiv.org/pdf/1909.02622)\]: Emprega os embeddings obtidos dun modelo BERT para calcular o *esforzo* de transformar un texto noutro. Por exemplo, mide como de difícil e convertir unha xeración do modelo nun texto de referencia. A menor *esforzo*, maior similitude entre os textos.
-- **BertScore**\[[*código*](https://github.com/Tiiiger/bert_score),[*paper*](https://arxiv.org/pdf/1904.09675)\]: Emprega os embeddings obtidos dun modelo BERT para calcular unha versión modificada do Coseno.
-- **Surprisal**\[[código](https://github.com/kanishkamisra/minicons),[*paper*](https://arxiv.org/pdf/2203.13112)\]: Mide a *sorpresa* que ten o modelo cando ve un token ou conxunto destes. Se o seu valor é alto significa que o modelo non está acostumado a facer xeracións dese tipo. Polo tanto, pode utilizarse para comparar o coñecemento de diferentes modelos nunha mesma lingua: os que teñan surprisal menores coñecerán teóricamente mellor a lingua que os que as teñan máis altas (que estará máis *sorprendidos* de ver os textos).
+- **MoverScore** \[[*código*](https://github.com/AIPHES/emnlp19-moverscore),[*paper*](https://arxiv.org/pdf/1909.02622)\]: Emprega os embeddings obtidos dun modelo BERT para calcular o *esforzo* de transformar un texto noutro. Por exemplo, mide como de difícil e convertir unha xeración do modelo nun texto de referencia. A menor *esforzo*, maior similitude entre os textos.
+- **BertScore** \[[*código*](https://github.com/Tiiiger/bert_score),[*paper*](https://arxiv.org/pdf/1904.09675)\]: Emprega os embeddings obtidos dun modelo BERT para calcular unha versión modificada do Coseno.
+- **Surprisal** \[[código](https://github.com/kanishkamisra/minicons),[*paper*](https://arxiv.org/pdf/2203.13112)\]: Mide a *sorpresa* que ten o modelo cando ve un token ou conxunto destes. Se o seu valor é alto significa que o modelo non está acostumado a facer xeracións dese tipo. Polo tanto, pode utilizarse para comparar o coñecemento de diferentes modelos nunha mesma lingua: os que teñan surprisal menores coñecerán teóricamente mellor a lingua que os que as teñan máis altas (que estará máis *sorprendidos* de ver os textos).
 
 ### Tarefas e datasets dispoñibles
 - **Resposta múltiple (QA)**
@@ -53,7 +55,7 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 |   CoLA     |                    |                    |                    | :heavy_check_mark: |
 |   Calame   |                    |                    |                    | :heavy_check_mark: |
 
-### Datasets e linguas
+### Datasets por lingua
 
 |            |                                   Galego                                   |                                         Inglés                                         |                                         Catalán                                        |                                         Español                                        | Portugués                                                                              |
 |------------|:--------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|----------------------------------------------------------------------------------------|
