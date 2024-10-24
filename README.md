@@ -2,7 +2,7 @@
 Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 
 > [!NOTE]  
-> Agora mesmo a feramenta está pensada para instalarse e utilizarse no Cesga. Próximamente haberá versión para o servidor.
+> Agora mesmo a feramenta está pensada para instalarseutilizarse no Cesga. Próximamente haberá versión para o servidor.
 
 ## Setup
 
@@ -27,7 +27,7 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 1.  Cargar o entorno de avaliación.
 2.  Moverse á carpeta ./launchers
 3.  Modificar a variable **MODELS** no lanzador do dataset correspondente (Calame ou CoLA)
-4.  Lanzar mediante ```sbatch`` ás colas do Cesga:
+4.  Lanzar mediante ```sbatch``` ás colas do Cesga:
    -    **CoLA**: ```sbatch launch_CoLA```: Obtéñense resultados para as versións do CoLA en galego, catalán, español e inglés.
    -    **Calame**: ```sbatch launch_Calame.sh```: Obtéñense resultados para Calame-PT (pendente Calame-GL).
 
@@ -65,5 +65,5 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 | OpenBookQA | [openbookqa_gl](https://huggingface.co/datasets/proxectonos/openbookqa_gl) | [openbookqa](https://huggingface.co/datasets/cnut1648/openbookqa_retrieved_by_colbert) | [openbookqa_ca](https://huggingface.co/datasets/projecte-aina/openbookqa_ca)           | [openbookqa_es](https://huggingface.co/datasets/BSC-LT/openbookqa-es)                  | Pendente                                                                               |
 | Belebele   | [belebele_gl](https://huggingface.co/datasets/proxectonos/belebele_gl)     | [belebele_eng_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/eng_Latn) | [belebele_cat_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/cat_Latn) | [belebele_spa_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/spa_Latn) | [belebele_por_Latn](https://huggingface.co/datasets/facebook/belebele/viewer/por_Latn) |
 | CoLA       | [galcola](https://huggingface.co/datasets/proxectonos/galcola)             | [glue_cola](https://huggingface.co/datasets/nyu-mll/glue/viewer/cola)                  | [CatCoLA](https://huggingface.co/datasets/nbel/CatCoLA)                                | [EsCoLA](https://huggingface.co/datasets/nbel/EsCoLA)                                  |                                                                                        |
-| Calame     |                                                                            |                                                                                        |                                                                                        |                                                                                        | [calame-pt](https://huggingface.co/datasets/NOVA-vision-language/calame-pt)            |
+| Calame     |                                  Pendente                                  |                                                                                        |                                                                                        |                                                                                        | [calame-pt](https://huggingface.co/datasets/NOVA-vision-language/calame-pt)            |
 

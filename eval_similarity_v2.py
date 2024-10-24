@@ -73,8 +73,10 @@ def bert_score(task,generations, references, print_results=False):
             print(f'Generated {i}: {generations[i]}')
             print(f'Bert Score {i}: [precision: {np.mean(bertscore_results["precision"][i]).round(4)}, recall: {np.mean(bertscore_results["recall"][i]).round(4)}, f1: {np.mean(bertscore_results["f1"][i]).round(4)}]')
             print(f'-----------------------')
-    logging.info(f'Global Bert Score: [precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]')
+    final_information = f'Global Bert Score: [precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
+    logging.info(final_information)
     print(f'-----------------------')
+    return final_information
     
 def compute_corpus_similarity(task, metric, generations, references):
     if metric == "bertscore":
@@ -118,11 +120,13 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
         similarities.append(np.mean(answer_similarities))
         print(f"    Mean score with question {i}: {similarities[-1]}")
         print(f"    Score with correct option '{correct_option}': {correct_similarities[-1]}")
-    logging.info(f"--{metric.upper()} RESULTS----------------")
-    logging.info(f"Global Mean similarity score: {np.mean(similarities)}")
-    logging.info(f"Global Mean similarity score with correct options: {np.mean(correct_similarities)}")
-    logging.info(f"Percentage of correct answers (over 1): {correct_answers/len(similarities)}")
+    final_information= f"--{metric.upper()} RESULTS----------------\n"
+    final_information+= f"Global Mean similarity score: {np.mean(similarities)}\n"
+    final_information+= f"Global Mean similarity score with correct options: {np.mean(correct_similarities)}\n"
+    final_information+= f"Percentage of correct answers (over 1): {correct_answers/len(similarities)}\n"
+    logging.info(final_information)
     print(f"---------------------------------")
+    return final_information
 
 def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids):
     offset_fewshot = 0
@@ -137,19 +141,24 @@ def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examp
         original_options.append(task.get_options(example))
 
     logging.info(f"--{metric.upper()} RESULTS----------------")
-    print(f"Similarity with correct options---------------------")
-    compute_corpus_similarity(task, metric, generated_answer, correct_options)
-    print(f"Similarity with all options------------------------")
-    compute_corpus_similarity(task, metric, generated_answer, original_options)
+    final_information = f"--{metric.upper()} RESULTS----------------\n"
+    final_information+= f"Similarity with correct options---------------------\n"
+    metric_values = compute_corpus_similarity(task, metric, generated_answer, correct_options)
+    final_information+= metric_values
+    final_information+= f"Similarity with all options------------------------\n"
+    metric_values = compute_corpus_similarity(task, metric, generated_answer, original_options)
+    final_information+= metric_values
+    logging.info(final_information)
     print(f"---------------------------------")
+    return final_information
 
 def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
     
-    logging.info("\nComenzando a avaliación da similaridade entre as respostas xeradas e as orixinais...")
+    logging.info("\nStarting similarity evaluation between generated and original answers...")
     tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
     model = AutoModel.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
     dataset = task.load_data()
-    
+    global_metrics_information = ""
     for metric in metrics:
         with open(results_file) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -158,11 +167,17 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
             
             logging.info(f"Evaluating metric {metric}...")
             if metric in ["cosine","moverscore"]:
-                evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_reader, fewshots_examples_ids)
+                metric_information = evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_reader, fewshots_examples_ids)
+                global_metrics_information += metric_information
             elif metric in ["bertscore"]:
-                evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids)
+                metric_information = evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids)
+                global_metrics_information += metric_information
             else:
                 raise NotImplementedError
+    logging.info(f"-----------------------------------------------------------")
+    logging.info(f"METRICS SUMMARY:\n{global_metrics_information}")
+    logging.info(f"-----------------------------------------------------------")
+            
 
 #- Xeración de respostas ----------------------------------------------
 def generate_answers(model, tokenizer, prompt):
@@ -190,7 +205,7 @@ def generate_answers_test(model, tokenizer, prompt_ids):
 def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cache, tokenHF):      
     answers = []
     fewshots_examples_ids = []
-    logging.info(f'Xerando textos para o modelo {model_id}...')
+    logging.info(f'Generating texts for model {model_id}...')
     tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
     model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
 
@@ -202,7 +217,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
             max_position_embeddings = model.config.max_position_embeddings
         else:
             max_position_embeddings = 2048
-        print("Numero máximo de tokens admitidos por bloque: ", max_position_embeddings)
+        print("Maxium block size: ", max_position_embeddings)
         
         for i, prompt in enumerate(csv_reader):
             if i in fewshots_examples_ids:
@@ -228,7 +243,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
                 continue
             csv_writer.writerow([answer])    
     
-    logging.info(f'Xeración rematada! Os textos xerados gardáronse en {results_file_name}...')
+    logging.info(f'Generation finished! Texts saved in {results_file_name}...')
     print("----------------------------------------------------------------------")
 
 #- Construcción das preguntas----------------------------------------------
@@ -254,7 +269,7 @@ def generate_examples(task, examples_file, fewshot_num=5, show_options=True):
                 continue
             question = fewshot_examples + task.build_prompt(data, show_answer=False, show_options=show_options)
             csv_writer.writerow([question])
-    logging.info(f"Exemplos creados con éxito! Almacéanse en {examples_file}")
+    logging.info(f"Exemples created succesfully! Examples saved in {examples_file}")
 
 #- Test de novas funcionalidades ----------------------------------------------
 def test():
@@ -273,31 +288,31 @@ class OptionalString(argparse.Action):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(description='Avaliación mediante similaridade de datasets de QA')
+    parser = argparse.ArgumentParser(description='Evaluation of QA datasets using similarity')
     # General arguments
-    parser.add_argument('--dataset', type=str, help='Dataset a avaliar (Belebele só)')
-    parser.add_argument('--model', type=str, help='Modelo a empregar para a xeración dos textos')
-    parser.add_argument('--cache', type=str, help='Directorio onde se gardarán os datos de Caché')
-    parser.add_argument('--token', type=str, nargs='?', default=None, action=OptionalString, help='Token de autenticación de Hugging Face')
-    parser.add_argument('--test', action='store_true', help='Test funcionalities')
-    parser.add_argument('--language', type=str, help='Lingua do dataset')
+    parser.add_argument('--dataset', type=str, help='Dataset to evaluate (Belebele only)')
+    parser.add_argument('--model', type=str, help='Model to use for text generation')
+    parser.add_argument('--cache', type=str, help='Directory where cache data will be stored')
+    parser.add_argument('--token', type=str, nargs='?', default=None, action=OptionalString, help='Hugging Face authentication token')
+    parser.add_argument('--test', action='store_true', help='Test functionalities')
+    parser.add_argument('--language', type=str, help='Dataset language')
     # Example creation arguments
-    parser.add_argument('--create_examples', action='store_true', help='Xerar exemplos')
-    parser.add_argument('--fewshot_num', type=int, help='Número de fewshots a xerar (5 por defecto)')
-    parser.add_argument('--examples_file', type=str, help='Nome do ficheiro de exemplos')
-    parser.add_argument('--show_options', type=lambda x: (str(x).lower() == 'true'), help='Incluir as opcións de resposta na xeración dos exemplos')
+    parser.add_argument('--create_examples', action='store_true', help='Generate examples')
+    parser.add_argument('--fewshot_num', type=int, help='Number of few-shots to generate (default is 5)')
+    parser.add_argument('--examples_file', type=str, help='Name of the examples file')
+    parser.add_argument('--show_options', type=lambda x: (str(x).lower() == 'true'), help='Include answer options when generating examples')
     # Generation arguments
-    parser.add_argument('--generate_answers', action='store_true', help='Xerar respostas para os examplos creados')
-    parser.add_argument('--results_file', type=str, help='Nome do ficheiro de resultados')
+    parser.add_argument('--generate_answers', action='store_true', help='Generate answers for the created examples')
+    parser.add_argument('--results_file', type=str, help='Name of the results file')
     # Evaluation arguments
-    parser.add_argument('--evaluate_similarity', action='store_true', help='Avaliar a similaridade entre as respostas xeradas e as orixinais')
-    parser.add_argument('--metrics', type=str, nargs='+', help='Métricas a empregar para a avaliación da similaridade')
+    parser.add_argument('--evaluate_similarity', action='store_true', help='Evaluate similarity between generated and original answers')
+    parser.add_argument('--metrics', type=str, nargs='+', help='Metrics to use for similarity evaluation')
 
     args = parser.parse_args()
     print(args)
 
     if args.test:
-        print("Test funcionalidades")
+        print("Test funcionalities")
         test()
         exit()
 
@@ -320,7 +335,7 @@ if __name__ == "__main__":
         task = tasks_sim_v2.SummarizationGL(cache=args.cache)
 
     else:
-        exit("Tarea non soportada. Actualmente están implementadas [PAWS, Belebele, OpenBookQA, ParafrasesGL, GalCoLA, Summarization-GL]")
+        exit("Task not supported. Currently implemented tasks are [PAWS, Belebele, OpenBookQA, ParafrasesGL, GalCoLA, Summarization-GL]")
 
     if args.create_examples:
         generate_examples(task, examples_file=args.examples_file, fewshot_num=args.fewshot_num, show_options=args.show_options)
@@ -332,6 +347,6 @@ if __name__ == "__main__":
         supported_metrics = ["cosine","bertscore","moverscore"]
         for metric in args.metrics:
             if metric not in supported_metrics:
-                exit(f"Métrica non soportada: {metric}. Actualmente están implementadas {supported_metrics}")
+                exit(f"Unsupported metric: {metric}. Currently implemented metrics are {supported_metrics}")
         evaluate_similarity(task, args.metrics, args.model, args.results_file, args.token)
         exit()
