@@ -73,7 +73,7 @@ def bert_score(task,generations, references, print_results=False):
             print(f'Generated {i}: {generations[i]}')
             print(f'Bert Score {i}: [precision: {np.mean(bertscore_results["precision"][i]).round(4)}, recall: {np.mean(bertscore_results["recall"][i]).round(4)}, f1: {np.mean(bertscore_results["f1"][i]).round(4)}]')
             print(f'-----------------------')
-    final_information = f'Global Bert Score: [precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
+    final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
     logging.info(final_information)
     print(f'-----------------------')
     return final_information
@@ -120,7 +120,7 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
         similarities.append(np.mean(answer_similarities))
         print(f"    Mean score with question {i}: {similarities[-1]}")
         print(f"    Score with correct option '{correct_option}': {correct_similarities[-1]}")
-    final_information= f"--{metric.upper()} RESULTS----------------\n"
+    final_information= f"--{metric.upper()} RESULTS--\n"
     final_information+= f"Global Mean similarity score: {np.mean(similarities)}\n"
     final_information+= f"Global Mean similarity score with correct options: {np.mean(correct_similarities)}\n"
     final_information+= f"Percentage of correct answers (over 1): {correct_answers/len(similarities)}\n"
@@ -141,11 +141,11 @@ def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examp
         original_options.append(task.get_options(example))
 
     logging.info(f"--{metric.upper()} RESULTS----------------")
-    final_information = f"--{metric.upper()} RESULTS----------------\n"
-    final_information+= f"Similarity with correct options---------------------\n"
+    final_information = f"--{metric.upper()} RESULTS--\n"
+    final_information+= f"Similarity with correct options: "
     metric_values = compute_corpus_similarity(task, metric, generated_answer, correct_options)
-    final_information+= metric_values
-    final_information+= f"Similarity with all options------------------------\n"
+    final_information+= metric_values+"\n"
+    final_information+= f"Similarity with all options: "
     metric_values = compute_corpus_similarity(task, metric, generated_answer, original_options)
     final_information+= metric_values
     logging.info(final_information)
@@ -174,8 +174,8 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
                 global_metrics_information += metric_information
             else:
                 raise NotImplementedError
-    logging.info(f"-----------------------------------------------------------")
-    logging.info(f"METRICS SUMMARY:\n{global_metrics_information}")
+    separator = "-----------------------------------------------------------\n"
+    logging.info(f"{separator}----METRICS SUMMARY----\n{global_metrics_information}\n{separator}")
     logging.info(f"-----------------------------------------------------------")
             
 
