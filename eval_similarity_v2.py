@@ -175,24 +175,20 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
             else:
                 raise NotImplementedError
     separator = "-----------------------------------------------------------\n"
-    logging.info(f"{separator}----METRICS SUMMARY----\n{global_metrics_information}\n{separator}")
-    logging.info(f"-----------------------------------------------------------")
+    logging.info(f"\n{separator}----METRICS SUMMARY----\n{global_metrics_information}\n{separator}")
             
 
 #- Xeración de respostas ----------------------------------------------
-def generate_answers(model, tokenizer, prompt):
-    ids = tokenizer.encode(f'{prompt}', return_tensors='pt')
-
-    max_new_tokens = 20 if task.name != "summarization-gl" else 200
-    final_outputs = model.generate(ids, 
+def generate_answers_no_pad(model, tokenizer, prompt_ids):
+    max_new_tokens = 20 if task.name != "summarization-gl" else 100
+    final_outputs = model.generate(prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
-        pad_token_id=model.config.eos_token_id,
-        repetition_penalty=0.5, 
+        repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
         temperature=0.5)
-    return tokenizer.decode(final_outputs[0], skip_special_tokens=True)    
+    return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
-def generate_answers_test(model, tokenizer, prompt_ids):
+def generate_answers(model, tokenizer, prompt_ids):
     max_new_tokens = 20 if task.name != "summarization-gl" else 100
     final_outputs = model.generate(prompt_ids, 
         do_sample=True,
@@ -208,6 +204,10 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
     logging.info(f'Generating texts for model {model_id}...')
     tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
     model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
+    if model_id == "irlab-udc/Llama-3.1-8B-Instruct-Galician":
+        generation_function = generate_answers_no_pad
+    else:
+        generation_function = generate_answers
 
     with open(examples_file,"r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -217,7 +217,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
             max_position_embeddings = model.config.max_position_embeddings
         else:
             max_position_embeddings = 2048
-        print("Maxium block size: ", max_position_embeddings)
+        print("Maximum block size: ", max_position_embeddings)
         
         for i, prompt in enumerate(csv_reader):
             if i in fewshots_examples_ids:
@@ -229,7 +229,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
                 fewshots_examples_ids.append(i) #Trick to avoid missing examples during similarity evaluation
                 print(f"ID: {i} - Pass due to length of the prompt")
             else:
-                generated_sequence = generate_answers_test(model, tokenizer, prompt_ids)
+                generated_sequence = generation_function(model, tokenizer, prompt_ids)
                 parts = generated_sequence.rsplit(fr'{task.splitPrompt}.*:', 1)
                 answer = parts[-1].strip()
                 answers.append(generated_sequence)
