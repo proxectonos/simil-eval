@@ -28,9 +28,10 @@ bertmodels_yaml = load_yaml(yaml_bertmodels_path)
 #- Cálculo da similaridade entre dúas oracións ----------------------------------------------
 def cosine_score(tokenizer, model, sentence1, sentence2):
     # Tokenização
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer.pad_token = tokenizer.eos_token
-    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True)
-    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True)
+    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True).to(device)
+    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True).to(device)
 
     # gerando embeddings para cada frase
     with torch.no_grad():
@@ -38,8 +39,8 @@ def cosine_score(tokenizer, model, sentence1, sentence2):
         outputs2 = model(**inputs2)
 
     # usamos só a última camada
-    embeddings1 = outputs1.last_hidden_state.mean(dim=1).squeeze().numpy()
-    embeddings2 = outputs2.last_hidden_state.mean(dim=1).squeeze().numpy()
+    embeddings1 = outputs1.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
+    embeddings2 = outputs2.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
 
     #  coseno
     similarity_score = 1 - cosine(embeddings1, embeddings2)
@@ -157,6 +158,8 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
     logging.info("\nStarting similarity evaluation between generated and original answers...")
     tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
     model = AutoModel.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
     dataset = task.load_data()
     global_metrics_information = ""
     for metric in metrics:
@@ -181,7 +184,7 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
 #- Xeración de respostas ----------------------------------------------
 def generate_answers_no_pad(model, tokenizer, prompt_ids):
     max_new_tokens = 20 if task.name != "summarization-gl" else 100
-    final_outputs = model.generate(prompt_ids, 
+    final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
         repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
@@ -190,7 +193,7 @@ def generate_answers_no_pad(model, tokenizer, prompt_ids):
 
 def generate_answers(model, tokenizer, prompt_ids):
     max_new_tokens = 20 if task.name != "summarization-gl" else 100
-    final_outputs = model.generate(prompt_ids, 
+    final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
         pad_token_id=model.config.eos_token_id,
@@ -204,6 +207,8 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
     logging.info(f'Generating texts for model {model_id}...')
     tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
     model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
     if model_id == "irlab-udc/Llama-3.1-8B-Instruct-Galician":
         generation_function = generate_answers_no_pad
     else:
@@ -223,7 +228,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
             if i in fewshots_examples_ids:
                 continue
             prompt = prompt[0]
-            prompt_ids = tokenizer.encode(f'{prompt}', return_tensors='pt')
+            prompt_ids = tokenizer(f'{prompt}', return_tensors='pt').to(device)
             
             if len(prompt_ids[0])+100 > max_position_embeddings:
                 fewshots_examples_ids.append(i) #Trick to avoid missing examples during similarity evaluation
