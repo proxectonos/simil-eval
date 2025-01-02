@@ -3,7 +3,7 @@ openbookqa:
   - en: cnut1648/openbookqa_retrieved_by_colbert
   - cat: projecte-aina/openbookqa_ca
   - es: BSC-LT/openbookqa-es
-  - pt: None
+  - pt: proxectonos/pt_OpenBookQA_test
 
 belebele:
   - gl: proxectonos/belebele_gl
@@ -11,3 +11,9 @@ belebele:
   - cat: [facebook/belebele,cat_Latn]
   - es: [facebook/belebele,spa_Latn]
   - pt: [facebook/belebele,por_Latn]
+
+veritasqa:
+  - gl: [projecte-aina/veritasQA,gl]
+  - en: [projecte-aina/veritasQA,en]
+  - cat: [projecte-aina/veritasQA cat]
+  - es: [projecte-aina/veritasQA,es]

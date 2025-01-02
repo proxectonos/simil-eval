@@ -3,11 +3,11 @@
 #SBATCH -D .             
 #SBATCH -o ../logs_similarity/%x_%j_err.log  
 #SBATCH -e ../logs_similarity/%x_%j_out.log
-#SBATCH --gres=gpu:a100:2 
-#SBATCH --cpus-per-task=64
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=32
 #SBATCH --nodes 1
 #SBATCH --mem=70G
-#SBATCH -t 6:00:00
+#SBATCH -t 2:00:00
 
 module --force purge
 module load cesga/2020
