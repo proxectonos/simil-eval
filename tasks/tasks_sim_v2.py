@@ -1,4 +1,4 @@
-from datasets import load_dataset
+from datasets import DownloadConfig, load_dataset
 from typing import List
 import yaml
 import os
@@ -25,7 +25,7 @@ class Task:
     Base class for different tasks.
     """
 
-    def __init__(self, name, dataloader, lang, splitPrompt, cache="./cache"):
+    def __init__(self, name, dataloader, lang, splitPrompt, cache="./cache", token=""):
         """
         Initializes a Task object.
 
@@ -35,6 +35,7 @@ class Task:
             lang (str): The language of the task.
             splitPrompt (str): The split prompt for the task.
             cache (str, optional): The cache directory. Defaults to "./cache".
+            token (str, optional): HF token to access private datasets. Defaults to "".
         """
         self.name = name
         self.dataloader = dataloader
@@ -42,6 +43,7 @@ class Task:
         self.dataset = None
         self.splitPrompt = splitPrompt
         self.cache = cache
+        self.token = token
     
     def set_cache(self, cache):
         """
@@ -286,13 +288,14 @@ class OpenBookQA(Task):
             "RESPOST",
             cache)
     
-    def __init__(self, lang, cache):
+    def __init__(self, lang, cache, token):
         super().__init__(
             "openbookqa",
             None,
             lang,
             "RESPOST",
-            cache)
+            cache,
+            token)
 
     def get_correct_option(self, example):
 
@@ -344,7 +347,7 @@ class OpenBookQA(Task):
         print(f"DATASET: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
-        self.dataset = load_dataset(hf_dataset, cache_dir = self.cache)["test"]
+        self.dataset = load_dataset(hf_dataset, cache_dir = self.cache, download_config=DownloadConfig(token=self.token))["test"]
         print("DATASET CARGADO!")
         return self.dataset
     

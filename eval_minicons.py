@@ -9,7 +9,8 @@ from datasets import load_dataset
 def get_scorer(model_name, cache_dir, tokenHF):
     model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir, return_dict=True, token=tokenHF)
     model_tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir , use_fast=True, token=tokenHF)
-    model_scorer = scorer.IncrementalLMScorer(model, tokenizer=model_tokenizer, device='cuda')
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model_scorer = scorer.IncrementalLMScorer(model, tokenizer=model_tokenizer, device=device)
     return model_scorer
 
 def get_surprisal(model_scorer, string_pair):

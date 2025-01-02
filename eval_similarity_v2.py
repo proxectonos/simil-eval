@@ -67,7 +67,7 @@ def bert_score(task,generations, references, print_results=False):
     logging.info(f"Evaluating BERT Score...")
     bertscore = evaluate.load("bertscore")
     bertscore_results = bertscore.compute(predictions=generations, references=references, 
-                                model_type= bertmodels_yaml[task.lang], idf=True, num_layers = 11, lang="gl")
+                                model_type= bertmodels_yaml[task.lang], idf=True, num_layers = 11, lang=task.lang)
     if print_results:
         for i in range(len(generations)):
             print(f'Reference {i}: {references[i]}')
@@ -209,7 +209,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
     model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.to(device)
-    if model_id == "irlab-udc/Llama-3.1-8B-Instruct-Galician":
+    if model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
         generation_function = generate_answers_no_pad
     else:
         generation_function = generate_answers
@@ -328,7 +328,7 @@ if __name__ == "__main__":
         task = tasks_sim_v2.PAWS(cache=args.cache)
 
     elif args.dataset == "openbookqa":
-        task = tasks_sim_v2.OpenBookQA(lang=args.language, cache=args.cache)
+        task = tasks_sim_v2.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
 
     elif args.dataset == "paraphrasis":
         task = tasks_sim_v2.ParafrasesGL(cache=args.cache)
