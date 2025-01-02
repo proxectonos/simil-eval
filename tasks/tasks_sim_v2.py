@@ -95,7 +95,7 @@ class Task:
         """
         raise NotImplementedError
 
-    def get_correct_option(self, example) -> str:
+    def get_correct_option(self, example) -> str|List[str]:
         """
         Gets the correct option for the given example.
 
@@ -103,7 +103,7 @@ class Task:
             example (dict): The example data.
 
         Returns:
-            str: The correct option.
+            str|List[str]: The correct or the correct options.
         """
         raise NotImplementedError
     
