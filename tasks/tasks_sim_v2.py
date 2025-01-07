@@ -1,5 +1,5 @@
 from datasets import DownloadConfig, load_dataset
-from typing import List
+from typing import Union, List
 import yaml
 import os
 
@@ -25,20 +25,18 @@ class Task:
     Base class for different tasks.
     """
 
-    def __init__(self, name, dataloader, lang, splitPrompt, cache="./cache", token=""):
+    def __init__(self, name, lang, splitPrompt, cache="./cache", token=""):
         """
         Initializes a Task object.
 
         Args:
             name (str): The name of the task.
-            dataloader (str): The path to the dataloader or to HF ubication.
             lang (str): The language of the task.
             splitPrompt (str): The split prompt for the task.
             cache (str, optional): The cache directory. Defaults to "./cache".
             token (str, optional): HF token to access private datasets. Defaults to "".
         """
         self.name = name
-        self.dataloader = dataloader
         self.lang = lang
         self.dataset = None
         self.splitPrompt = splitPrompt
@@ -70,7 +68,7 @@ class Task:
         Returns:
             str: The string representation of the Task object.
         """
-        return f"Data(name={self.name}, dataloader={self.dataloader}, lang={self.lang}, splitPrompt={self.splitPrompt}, cache={self.cache})"
+        return f"Data(name={self.name}, lang={self.lang}, splitPrompt={self.splitPrompt}, cache={self.cache})"
 
     def build_prompt(self, example, show_answer, show_options) -> str:
         """
@@ -95,7 +93,7 @@ class Task:
         """
         raise NotImplementedError
 
-    def get_correct_option(self, example) -> str|List[str]:
+    def get_correct_option(self, example) -> Union[str, List[str]]:
         """
         Gets the correct option for the given example.
 
@@ -129,7 +127,6 @@ class Belebele(Task):
 
         super().__init__(
             "belebele",
-            "dataloaders/belebele.py",
             "gl",
             "RESPOST")
     
@@ -137,7 +134,6 @@ class Belebele(Task):
 
         super().__init__(
             "belebele",
-            "dataloaders/belebele.py",
             "gl",
             "RESPOST",
             cache)
@@ -145,7 +141,6 @@ class Belebele(Task):
     def __init__(self, lang, cache):
         super().__init__(
             "belebele",
-            None,
             lang,
             "RESPOST",
             cache)
@@ -215,55 +210,6 @@ class Belebele(Task):
         print("DATASET CARGADO!")
         return self.dataset
     
-
-class PAWS(Task):
-    """
-    Class for the PAWS task.
-    """
-
-    def __init__(self):
-
-        super().__init__(
-            "paws",
-            "dataloaders/paws-gl.py",
-            "gl",
-            "PUNTUACIO")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "paws",
-            "dataloaders/paws-gl.py",
-            "gl",
-            "PUNTUACIO",
-            cache)
-
-    def get_correct_option(self, example):
-
-        return str(example["label"])
-
-    def get_options(self, example):
-
-        return ["0","1","2"]
-
-    def build_prompt(self,example, show_answer, show_options = True):
-
-        prompt = ""
-        if show_answer:
-            prompt = f"""ORACION: {example['sentence1']} 
-            PARAFRASE: {example['sentence2']} 
-            PUNTUACION: {example['label']}\n"""
-        else:
-            prompt = f"""ORACION: {example['sentence1']} 
-            PARAFRASE: {example['sentence2']} 
-            PUNTUACIO"""
-
-        return prompt
-    
-    def load_data(self):
-
-        self.dataset = load_dataset(self.dataloader,  "paws-gl", cache_dir = self.cache)["test"]
-        return self.dataset
     
 
 class OpenBookQA(Task):
@@ -275,7 +221,6 @@ class OpenBookQA(Task):
 
         super().__init__(
             "openbookqa",
-            "dataloaders/openbookqa.py",
             "gl",
             "RESPOST")
     
@@ -283,7 +228,6 @@ class OpenBookQA(Task):
 
         super().__init__(
             "openbookqa",
-            "dataloaders/openbookqa.py",
             "gl",
             "RESPOST",
             cache)
@@ -291,7 +235,6 @@ class OpenBookQA(Task):
     def __init__(self, lang, cache, token):
         super().__init__(
             "openbookqa",
-            None,
             lang,
             "RESPOST",
             cache,
@@ -349,154 +292,4 @@ class OpenBookQA(Task):
             exit(f"Dataset not found for {self.name} and language {self.lang}")
         self.dataset = load_dataset(hf_dataset, cache_dir = self.cache, download_config=DownloadConfig(token=self.token))["test"]
         print("DATASET CARGADO!")
-        return self.dataset
-    
-class ParafrasesGL(Task):
-    """
-    Class for the Parafrases-GL task.
-    """
-
-    def __init__(self):
-
-        super().__init__(
-            "parafrases-gl",
-            "dataloaders/parafrases-gl.py",
-            "gl",
-            "PUNTUACIO")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "parafrases-gl",
-            "dataloaders/parafrases-gl.py",
-            "gl",
-            "PUNTUACIO",
-            cache)
-
-    def get_correct_option(self, example):
-
-        return str(example["label"])
-
-    def get_options(self, example):
-
-        return ["0","1","2"]
-
-    def build_prompt(self,example, show_answer, show_options = True):
-
-        prompt = ""
-        if show_answer:
-            prompt = f"""ORACION: {example['sentence1']} 
-            PARAFRASE: {example['sentence2']} 
-            PUNTUACION: {example['label']}\n"""
-        else:
-            prompt = f"""ORACION: {example['sentence1']} 
-            PARAFRASE: {example['sentence2']} 
-            PUNTUACIO"""
-
-        return prompt
-    
-    def load_data(self):
-
-        self.dataset = load_dataset(self.dataloader,  self.name, cache_dir = self.cache)["test"]
-        return self.dataset
-
-class GalCoLA(Task):
-    """
-    Class for the GalCoLA task.
-    """
-
-    def __init__(self):
-
-        super().__init__(
-            "galcola",
-            "dataloaders/galcola.py",
-            "gl",
-            "ACEPTABL")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "galcola",
-            "dataloaders/galcola.py",
-            "gl",
-            "ACEPTABL",
-            cache)
-
-    def get_correct_option(self, example):
-
-        return str(example["is_acceptable"])
-
-    def get_options(self, example):
-
-        return ["0","1"]
-
-    def build_prompt(self,example, show_answer, show_options = True):
-
-        prompt = ""
-        if show_answer:
-            prompt = f"""ORACION: {example['sentence']} 
-            ACEPTABLE: {example['is_aceptable']}\n"""
-        else:
-            prompt = f"""ORACION: {example['sentence']} 
-            ACEPTABL"""
-
-        return prompt
-    
-    def load_data(self):
-
-        self.dataset = load_dataset(self.dataloader,  "galcola", cache_dir = self.cache)["test"]
-        return self.dataset
-
-class SummarizationGL(Task):
-    """
-    Class for the OpenBookQA task.
-    """
-
-    def __init__(self):
-
-        super().__init__(
-            "summarization-gl",
-            "dataloader/summarization-gl.py",
-            "gl",
-            "RESUM")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "summarization-gl",
-            "dataloaders/summarization-gl.py",
-            "gl",
-            "RESUM",
-            cache)
-    
-    def get_correct_option(self, example):
-
-        return example["summary"]
-
-    def get_options(self, example):
-
-        return [example["summary"]]
-
-    def build_prompt(self,example, show_answer, show_options = True):
-
-        prompt = ""
-        if show_options:
-            if show_answer:
-                prompt = f"""TEXTO: {example['text']}
-                RESUMO: {example['summary']}\n"""
-            else:
-                prompt = f"""TEXTO: {example['text']}
-                RESUM"""
-        else:
-            if show_answer:
-                prompt = f"""TEXTO: {example['text']}
-                RESUMO: {example['summary']}\n"""
-            else:
-                prompt = f"""TEXTO: {example['text']}
-                RESUM"""
-        return prompt
-    
-    def load_data(self):
-
-        self.dataset = load_dataset(self.dataloader, "summarization-gl", cache_dir = self.cache, split='test[:1000]') #Cargamos só os primeiros 1000 examplos
         return self.dataset

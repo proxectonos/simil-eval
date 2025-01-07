@@ -323,24 +323,15 @@ if __name__ == "__main__":
 
     if args.dataset == "belebele":
         task = tasks_sim_v2.Belebele(lang=args.language, cache=args.cache)
-    
-    elif args.dataset == "paws":
-        task = tasks_sim_v2.PAWS(cache=args.cache)
 
     elif args.dataset == "openbookqa":
         task = tasks_sim_v2.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
-
-    elif args.dataset == "paraphrasis":
-        task = tasks_sim_v2.ParafrasesGL(cache=args.cache)
-
-    elif args.dataset == "cola":
-        task = tasks_sim_v2.GalCoLA(cache=args.cache)
-
-    elif args.dataset == "summarization":
-        task = tasks_sim_v2.SummarizationGL(cache=args.cache)
+    
+    if args.dataset == "veritasqa":
+        task = tasks_sim_v2.Belebele(lang=args.language, cache=args.cache)
 
     else:
-        exit("Task not supported. Currently implemented tasks are [PAWS, Belebele, OpenBookQA, ParafrasesGL, GalCoLA, Summarization-GL]")
+        exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA, VeritasQA]")
 
     if args.create_examples:
         generate_examples(task, examples_file=args.examples_file, fewshot_num=args.fewshot_num, show_options=args.show_options)
