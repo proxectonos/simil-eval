@@ -112,8 +112,12 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
         for original_answer in original_options:
             similarity = compute_sentence_similarity(task,metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
             answer_similarities.append(similarity)
-            if original_answer == correct_option:
-                correct_similarities.append(similarity)
+            if isinstance(correct_option, list): #This can handle multiple correct options (as in VeritasQA)
+                if original_answer in correct_option:
+                    correct_similarities.append(similarity)
+            else:
+                if original_answer == correct_option:
+                    correct_similarities.append(similarity)
             print(f"    Similarity score with option {j}: {original_answer}: {similarity}")
             j +=1
         if max(answer_similarities) == correct_similarities[-1] and max(answer_similarities) > 0.0: #Remove 0.0 similarity with all cases:
