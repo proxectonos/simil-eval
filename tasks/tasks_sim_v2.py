@@ -361,7 +361,6 @@ class VeritasQA(Task):
         print(f"DATASET: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
-        
         repo=hf_dataset[0]
         lang_subset=hf_dataset[1]
         print(f"DATASET: {repo} - {lang_subset}")
