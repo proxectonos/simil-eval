@@ -44,6 +44,7 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 - **Resposta múltiple (QA)**
   - *OpenBookQA*: 4 opcións posibles. Faise unha pregunta e debe elexirse a opción correcta.
   - *Belebele*: 4 opcións posibles. Proporciónase un contexto con diversa información, e logo faise unha pregunta con opcións onde a resposta correcta pode deducirse do contexto.
+  - *VeritasQA*: Entre 4 e 10 opcións posibles. Faise unha pregunta e debe elixirse a opción correcta, pero hai varias opcións correctas posibles.
 - **Aceptabilidade Lingüística**:   
   - *CoLA*: Consta de oracións etiquetadas como aceptables (1) ou non (0) lingüísticamente. Permite estudar cando un modelo é máis propenso a escribir máis textos aceptables ou non, comparando as probabilidades que da a cada tipo de oración.
 - **Capacidades xerativas**:
@@ -57,7 +58,7 @@ Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 |  Belebele  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
 |   CoLA     |                    |                    |                    | :heavy_check_mark: |
 |   Calame   |                    |                    |                    | :heavy_check_mark: |
-| VeritasQA  | :heavy_check_mark: | :heavy_check_mark: |                    | :heavy_check_mark: |
+| VeritasQA  | :heavy_check_mark: | :heavy_check_mark: |                    |                    |
 
 ### Datasets por lingua
 
