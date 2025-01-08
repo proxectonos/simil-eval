@@ -2,7 +2,7 @@
 Ferramenta para avaliar LLMs empleando medidas de similaridade entre embeddings.
 
 > [!NOTE]  
-> Agora mesmo a feramenta está pensada para instalarseutilizarse no Cesga. Próximamente haberá versión para o servidor.
+> Agora mesmo a feramenta está pensada para utilizarse no Cesga. Próximamente haberá versión para o servidor.
 
 ## Setup
 
