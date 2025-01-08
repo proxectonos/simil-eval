@@ -1,4 +1,4 @@
-from tasks_sim_v2 import Task
+from tasks.sim_tasks import Task
 
 class OpenBookQA(Task):
     """

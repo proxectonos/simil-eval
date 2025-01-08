@@ -1,8 +1,7 @@
 from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
-import evaluate
-import tasks.tasks_sim_v2 as tasks_sim_v2
+import tasks.sim_tasks as sim_tasks
+import utils.metrics as sim_metrics
 import torch
-from scipy.spatial.distance import cosine
 import random
 import csv
 import numpy as np
@@ -23,65 +22,26 @@ def load_yaml(file_path):
             print(f"Error loading YAML file: {exc}")
             return None
 bertmodels_yaml = load_yaml(yaml_bertmodels_path)
-#-- Cálculo da similaridade ----------------------------------------------
 
-#- Cálculo da similaridade entre dúas oracións ----------------------------------------------
-def cosine_score(tokenizer, model, sentence1, sentence2):
-    # Tokenização
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    tokenizer.pad_token = tokenizer.eos_token
-    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True).to(device)
-    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True).to(device)
-
-    # gerando embeddings para cada frase
-    with torch.no_grad():
-        outputs1 = model(**inputs1)
-        outputs2 = model(**inputs2)
-
-    # usamos só a última camada
-    embeddings1 = outputs1.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
-    embeddings2 = outputs2.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
-
-    #  coseno
-    similarity_score = 1 - cosine(embeddings1, embeddings2)
-    return similarity_score
-
-def mover_score(task,generation, reference):
-    os.environ['MOVERSCORE_MODEL'] = bertmodels_yaml[task.lang]
-    from moverscore_v2 import sentence_score
-
-    moverscore = sentence_score(generation, [reference], trace=False)
-    return moverscore
-
+#-- Cálculo das métricas de similaridade ----------------------------------------------
 def compute_sentence_similarity(task,metric, tokenizer, model, sentence1, sentence2):
 
     if metric == "cosine":
-        return cosine_score(tokenizer, model, sentence1, sentence2)
+        return sim_metrics.cosine_score(tokenizer, model, sentence1, sentence2)
     elif metric == "moverscore":
-        return mover_score(task,sentence1, sentence2)
+        bert_model = bertmodels_yaml[task.lang]
+        return sim_metrics.mover_score(bert_model,sentence1, sentence2)
     else:
         raise NotImplementedError
-
-#- Cálculo da similaridade entre dous corpus de oracións ----------------------------------------------
-def bert_score(task,generations, references, print_results=False):
-    logging.info(f"Evaluating BERT Score...")
-    bertscore = evaluate.load("bertscore")
-    bertscore_results = bertscore.compute(predictions=generations, references=references, 
-                                model_type= bertmodels_yaml[task.lang], idf=True, num_layers = 11, lang=task.lang)
-    if print_results:
-        for i in range(len(generations)):
-            print(f'Reference {i}: {references[i]}')
-            print(f'Generated {i}: {generations[i]}')
-            print(f'Bert Score {i}: [precision: {np.mean(bertscore_results["precision"][i]).round(4)}, recall: {np.mean(bertscore_results["recall"][i]).round(4)}, f1: {np.mean(bertscore_results["f1"][i]).round(4)}]')
-            print(f'-----------------------')
-    final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
-    logging.info(final_information)
-    print(f'-----------------------')
-    return final_information
-    
+   
 def compute_corpus_similarity(task, metric, generations, references):
     if metric == "bertscore":
-        return bert_score(task, generations, references)
+        bert_model = bertmodels_yaml[task.lang]
+        bertscore_results = sim_metrics.bert_score(task.lang, bert_model, generations, references, print_results=False)
+        final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
+        logging.info(final_information)
+        print(f'-----------------------')
+        return final_information
     else:
         raise NotImplementedError
 
@@ -322,22 +282,22 @@ if __name__ == "__main__":
         exit()
 
     if args.dataset == "belebele":
-        task = tasks_sim_v2.Belebele(lang=args.language, cache=args.cache)
+        task = sim_tasks.Belebele(lang=args.language, cache=args.cache)
     
     elif args.dataset == "paws":
-        task = tasks_sim_v2.PAWS(cache=args.cache)
+        task = sim_tasks.PAWS(cache=args.cache)
 
     elif args.dataset == "openbookqa":
-        task = tasks_sim_v2.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
+        task = sim_tasks.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
 
     elif args.dataset == "paraphrasis":
-        task = tasks_sim_v2.ParafrasesGL(cache=args.cache)
+        task = sim_tasks.ParafrasesGL(cache=args.cache)
 
     elif args.dataset == "cola":
-        task = tasks_sim_v2.GalCoLA(cache=args.cache)
+        task = sim_tasks.GalCoLA(cache=args.cache)
 
     elif args.dataset == "summarization":
-        task = tasks_sim_v2.SummarizationGL(cache=args.cache)
+        task = sim_tasks.SummarizationGL(cache=args.cache)
 
     else:
         exit("Task not supported. Currently implemented tasks are [PAWS, Belebele, OpenBookQA, ParafrasesGL, GalCoLA, Summarization-GL]")
