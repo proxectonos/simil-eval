@@ -2,6 +2,7 @@ from datasets import DownloadConfig, load_dataset
 from typing import Union, List
 import yaml
 import os
+import random
 
 # Load the tasks from the yaml file----------------
 yaml_tasks_path = f'{os.path.dirname(__file__)}/tasks_ubication.yaml'
@@ -305,21 +306,26 @@ class VeritasQA(Task):
             lang,
             "RESPOST",
             cache)
-
-    def get_correct_option(self, example):
-        raise NotImplementedError("This method is not implemented for this task")
-    
+        
     def get_correct_options(self, example):
-        return example["correct_answers"].split(";")
+        if ";" in example["correct_answers"]:
+            return example["correct_answers"].split(";")
+        return [example["correct_answers"]]
 
     def get_incorrect_options(self, example):
-        return example["incorrect_answers"].split(";")
+        if ";" in example["incorrect_answers"]:
+            return example["incorrect_answers"].split(";")
+        return [example["incorrect_answers"]]
+
+    def get_correct_option(self, example): #Necessary to make minimal changes in eval_similarity code
+        return self.get_correct_options(example)
     
     def get_options(self, example):
-        correct_options = example["correct_answers"].split(";")
-        incorrect_options = example["incorrect_answers"].split(";")
+        correct_options = self.get_correct_options(example)
+        incorrect_options = self.get_incorrect_options(example)
         options = correct_options + incorrect_options
-        options = random.shuffle(correct_options)
+        options = [option.strip() for option in options] #Remove leading and trailing whitespaces
+        random.shuffle(options)
         return options
     
     def get_best_answer(self, example):
@@ -333,15 +339,9 @@ class VeritasQA(Task):
             formated_options = "\n".join([f"OPCION {i+1}: {option}" for i, option in enumerate(options)])
             if show_answer:
                 correct_option = self.get_best_answer(example)
-                prompt = f"""CONTEXTO: {example['question']}
-                PREGUNTA: {example['question']} 
-                {formated_options}
-                RESPOSTA: {correct_option}\n"""
+                prompt = f"""   PREGUNTA: {example['question']}\n{formated_options}\nRESPOSTA: {correct_option}\n"""
             else:
-                prompt = f"""CONTEXTO: {example['question']} 
-                PREGUNTA: {example['question']} 
-                {formated_options}
-                RESPOST"""
+                prompt = f"""   PREGUNTA: {example['question']}\n{formated_options}\nRESPOST"""
         else:
             if show_answer:
                 correct_option = self.get_best_answer(example)
