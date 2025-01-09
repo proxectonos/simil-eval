@@ -2,13 +2,13 @@
 
 #SBATCH -D .
 #SBATCH -N 1
-#SBATCH -J NOS-Minicons-CoLA-Carvalho-Llama
+#SBATCH -J NOS-surprisal-CoLA-Carvalho-Llama
 #SBATCH --mem=70G
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=32
-#SBATCH -o ../logs_surprisal/Carvlaho-Llama_45_Cola_GL_EN_CAT_ES_%j.out
-#SBATCH -e ../logs_surprisal/Carvalho-Llama_45_Cola_GL_EN_CAT_ES_%j.err
+#SBATCH -o ../logs_surprisal/Debug_CoLA_%j.out
+#SBATCH -e ../logs_surprisal/Debug_CoLA_%j.err
 #SBATCH -t 30:00
 
 declare -a MODELS=(
@@ -26,7 +26,7 @@ declare -a MODELS=(
     # "EleutherAI/gpt-neo-1.3B"
     #"proxectonos/Llama3.1-Carballo"
     #"meta-llama/Llama-3.1-8B"
-    #"BSC-LT/salamandra-2b"
+    "BSC-LT/salamandra-2b"
     #"BSC-LT/salamandra-7b"
     #"BSC-LT/salamandraTA-2B"
     #"proxectonos/Carballo_Llama_Test"
@@ -42,7 +42,8 @@ declare -a MODELS=(
     #"meta-llama/Llama-3.1-8B-Instruct"
     #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
     #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-    "/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama"
+    #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama"
+    #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 )
 
 cd ..
@@ -62,22 +63,22 @@ if [ -z "$CACHE_DIR" ]; then
 fi
 #------------------------------------------------------------
 
-echo "Launching minicons test for Galician------------------"
+echo "Launching surprisal test for Galician------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang gl --token $HF_TOKEN
+    python3 eval_surprisal.py --model $model --cache $CACHE_DIR --dataset cola --lang gl --token $HF_TOKEN
 done
 
-echo "Launching minicons test for English------------------"
+echo "Launching surprisal test for English------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang en --token $HF_TOKEN
+    python3 eval_surprisal.py --model $model --cache $CACHE_DIR --dataset cola --lang en --token $HF_TOKEN
 done
 
-echo "Launching minicons test for Catalan------------------"
+echo "Launching surprisal test for Catalan------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang cat --token $HF_TOKEN
+    python3 eval_surprisal.py --model $model --cache $CACHE_DIR --dataset cola --lang cat --token $HF_TOKEN
 done
 
-echo "Launching minicons test for Spanish------------------"
+echo "Launching surprisal test for Spanish------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py --model $model --cache $CACHE_DIR --dataset cola --lang es --token $HF_TOKEN
+    python3 eval_surprisal.py --model $model --cache $CACHE_DIR --dataset cola --lang es --token $HF_TOKEN
 done
