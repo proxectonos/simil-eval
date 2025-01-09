@@ -27,7 +27,7 @@ def cosine_score(tokenizer, model, sentence1, sentence2):
 
 def mover_score(bert_model, generation, reference):
     os.environ['MOVERSCORE_MODEL'] = bert_model
-    from moverscore_v2 import sentence_score
+    from utils.moverscore_v2 import sentence_score
 
     moverscore = sentence_score(generation, [reference], trace=False)
     return moverscore

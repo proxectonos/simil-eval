@@ -1,4 +1,4 @@
-import tasks.sim_tasks as sim_tasks
+import sim_tasks
 import utils.metrics as sim_metrics
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel
