@@ -6,22 +6,21 @@ import logging
 import os
 
 def cosine_score(tokenizer, model, sentence1, sentence2):
-    # Tokenização
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer.pad_token = tokenizer.eos_token
     inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True).to(device)
     inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True).to(device)
 
-    # gerando embeddings para cada frase
+    # Embedding generation
     with torch.no_grad():
         outputs1 = model(**inputs1)
         outputs2 = model(**inputs2)
 
-    # usamos só a última camada
+    # Use only the last hidden state
     embeddings1 = outputs1.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
     embeddings2 = outputs2.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
 
-    #  coseno
+    # Cosine similarity
     similarity_score = 1 - cosine(embeddings1, embeddings2)
     return similarity_score
 
