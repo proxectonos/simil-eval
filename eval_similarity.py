@@ -143,21 +143,21 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
 
 #- Xeración de respostas ----------------------------------------------
 def generate_answers_no_pad(model, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "summarization-gl" else 100
+    max_new_tokens = 20 if task.name != "None" else 100
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
-        repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
+        repetition_penalty=0.5 if task.name != "None" else 1.2, 
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
 def generate_answers(model, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "summarization-gl" else 100
+    max_new_tokens = 20 if task.name != "None" else 100
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
         pad_token_id=model.config.eos_token_id,
-        repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
+        repetition_penalty=0.5 if task.name != "None" else 1.2, 
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True)  
 
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(description='Evaluation of QA datasets using similarity')
     # General arguments
-    parser.add_argument('--dataset', type=str, help='Dataset to evaluate (Belebele only)')
+    parser.add_argument('--dataset', type=str, help='Dataset to evaluate')
     parser.add_argument('--model', type=str, help='Model to use for text generation')
     parser.add_argument('--cache', type=str, help='Directory where cache data will be stored')
     parser.add_argument('--token', type=str, nargs='?', default=None, action=OptionalString, help='Hugging Face authentication token')
@@ -283,21 +283,9 @@ if __name__ == "__main__":
 
     if args.dataset == "belebele":
         task = sim_tasks.Belebele(lang=args.language, cache=args.cache)
-    
-    elif args.dataset == "paws":
-        task = sim_tasks.PAWS(cache=args.cache)
 
     elif args.dataset == "openbookqa":
         task = sim_tasks.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
-
-    elif args.dataset == "paraphrasis":
-        task = sim_tasks.ParafrasesGL(cache=args.cache)
-
-    elif args.dataset == "cola":
-        task = sim_tasks.GalCoLA(cache=args.cache)
-
-    elif args.dataset == "summarization":
-        task = sim_tasks.SummarizationGL(cache=args.cache)
 
     else:
         exit("Task not supported. Currently implemented tasks are [PAWS, Belebele, OpenBookQA, ParafrasesGL, GalCoLA, Summarization-GL]")
