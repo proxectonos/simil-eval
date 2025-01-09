@@ -21,22 +21,16 @@ def get_surprisal_last_word(model_scorer, string):
     last_word = words[-1]
     surprisals = model_scorer.token_score(string, surprisal=True)[0]
     last_surprisal_word = surprisals[-1][0]
-    
-    #print(f"{last_word}")
-    #print(f"    {last_surprisal_word} {surprisals[-1][1]}")
+
     # Check if the last word is the same as the last surprisal word
     if last_word == last_surprisal_word:
         return surprisals[-1][1]
-    
     # If not, concatenate previous elements until they match
     for i in range(2, len(words) + 1):
         last_surprisal_word = ''.join(word for word, _ in surprisals[-i:])
-        word, score = surprisals[-i]
-        #print(f"    {word} {score}")
+        #word, score = surprisals[-i]; print(f"    {word} {score}")
         if last_word == last_surprisal_word:
             return max([score for _, score in surprisals[-i:]])
-            #return score
-            #return np.mean([score for _, score in surprisals[-i:]])
     print(f"Last word not found in the surprisal list: {last_word}")
     return None
     
@@ -47,9 +41,9 @@ def obtain_score_calame(model_scorer, model_name, dataset):
         scores.append(score)
 
     scores_mean = round(np.mean([x for x in scores if x != None]),4)
-    print(f"Results for model: {model_name}")
-    print(f"Mean score last word: {scores_mean}")
-    print("#"*20)
+    print(f"""Results for model: {model_name}
+            Mean score last word: {scores_mean}
+    {"#"*20}""")
 
 def obtain_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
     good_scores = []
@@ -65,12 +59,12 @@ def obtain_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
     good_mean = round(np.mean(good_scores),4)
     bad_mean = round(np.mean(bad_scores),4)
     difference_mean = round(bad_mean - good_mean,4)
-    print(f"Results for model: {model_name}")
-    print(f"Good mean: {good_mean}")
-    print(f"Bad mean: {bad_mean}")
-    print(f"Difference between means (bad-good): {difference_mean}")
-    print(f"{good_mean},{bad_mean},{difference_mean}")
-    print("#"*20)
+    print(f"""Results for model: {model_name}
+            Good mean: {good_mean}
+            Bad mean: {bad_mean}
+            Difference between means (bad-good): {difference_mean}
+            {good_mean},{bad_mean},{difference_mean}
+    {"#"*20}""")
 
 def load_galcola(cache_dir):
     dataset = load_dataset("proxectonos/galcola", cache_dir = cache_dir)["test"]
@@ -136,26 +130,17 @@ def avaliate_cola(lang,model_scorer, model_name, cache_dir):
 
 def test():
     print("Test function")
-    dataset = load_dataset("proxectonos/galcola")["test"]
-    print(dataset)
-
-    # Filter the dataset based on the feature label
-    dataset_bad = [item['sentence'] for item in dataset if item['label'] == 0]
-    dataset_good = [item['sentence'] for item in dataset if item['label'] == 1]
-
-    print("Dataset with label 0:", dataset_bad)
-    print("Dataset with label 1:", dataset_good)
     return
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(description='Avaliación da Surprisal para datasets lingüísticos')
-    parser.add_argument('--model', type=str, help='Modelo a empregar para obter as representacións dos textos')
-    parser.add_argument('--cache', type=str, help='Directorio onde se gardarán os datos de caché')
-    parser.add_argument('--test', action='store_true', help='Test funcionalities')
-    parser.add_argument('--lang', type=str, help='Linguaxe do dataset')
-    parser.add_argument('--dataset', type=str, help='Dataset a avaliar (cola ou calame)')
-    parser.add_argument('--token', type=str, help='Token de autenticación de Hugging Face')
+    parser = argparse.ArgumentParser(description='Evaluation of Surprisal for linguistic datasets')
+    parser.add_argument('--model', type=str, help='Model to use for obtaining text representations')
+    parser.add_argument('--cache', type=str, help='Directory where cache data will be stored')
+    parser.add_argument('--test', action='store_true', help='Test functionalities')
+    parser.add_argument('--lang', type=str, help='Language of the dataset')
+    parser.add_argument('--dataset', type=str, help='Dataset to evaluate (CoLA or Calame)')
+    parser.add_argument('--token', type=str, help='Hugging Face authentication token')
     args = parser.parse_args()
 
     if args.test:
