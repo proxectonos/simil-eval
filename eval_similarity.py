@@ -52,6 +52,9 @@ if __name__ == "__main__":
     elif args.dataset == "openbookqa":
         task = sim_tasks.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
 
+    if args.dataset == "veritasqa":
+        task = sim_tasks.VeritasQA(lang=args.language, cache=args.cache)
+
     else:
         exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA]")
 
