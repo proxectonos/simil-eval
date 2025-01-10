@@ -43,6 +43,7 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
 - **Multiple Choice QA**:
   - *OpenBookQA*: Four possible answers. A question is asked, and the correct answer must be selected.
   - *Belebele*: Four possible answers. A context is provided with diverse information, followed by a question with options where the correct answer can be deduced from the context.
+  - *VeritasQA*: Between 4 and 10 possible options. A question is asked and the correct option must be chosen, but there are multiple correct options possible.
 - **Linguistic Acceptability**:  
   - *CoLA*: Contains sentences labeled as linguistically acceptable (1) or unacceptable (0). This allows for studying when a model is more likely to generate acceptable or unacceptable texts by comparing the probabilities it assigns to each type of sentence.
 - **Generative Capabilities**:
