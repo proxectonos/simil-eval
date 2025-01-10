@@ -7,23 +7,17 @@
 from __future__ import absolute_import, division, print_function
 import numpy as np
 import torch
+from transformers import AutoTokenizer, AutoModel
 import string
 import os
-from pyemd import emd, emd_with_flow
-from torch import nn
+from pyemd import emd_with_flow
 from math import log
 from itertools import chain
 
 from collections import defaultdict, Counter
 from multiprocessing import Pool
 from functools import partial
-
 from typing import List
-
-
-from transformers import AutoTokenizer, AutoModel
-
-device = 'cuda'
 
 if os.environ.get('MOVERSCORE_MODEL'):
     model_name = os.environ.get('MOVERSCORE_MODEL')
@@ -32,6 +26,7 @@ else:
 tokenizer = AutoTokenizer.from_pretrained(model_name, do_lower_case=True)
 model = AutoModel.from_pretrained(model_name, output_hidden_states=True, output_attentions=True)
 model.eval()
+device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
 def truncate(tokens):
@@ -43,7 +38,6 @@ def process(a):
     a = ["[CLS]"]+truncate(tokenizer.tokenize(a))+["[SEP]"]
     a = tokenizer.convert_tokens_to_ids(a)
     return set(a)
-
 
 def get_idf_dict(arr, nthreads=4):
     idf_count = Counter()
@@ -76,9 +70,6 @@ def bert_encode(model, x, attention_mask):
         return result[1] 
     else:
         return result[2] 
-
-#with open('stopwords.txt', 'r', encoding='utf-8') as f:
-#    stop_words = set(f.read().strip().split(' '))
 
 def collate_idf(arr, tokenize, numericalize, idf_dict,
                 pad="[PAD]",device='cuda:0'):
@@ -182,71 +173,6 @@ def word_mover_score(refs, hyps, idf_dict_ref, idf_dict_hyp, stop_words=[], n_gr
             preds.append(score)
 
     return preds
-
-import matplotlib.pyplot as plt
-
-def plot_example(is_flow, reference, translation, device='cuda:0'):
-    
-    idf_dict_ref = defaultdict(lambda: 1.) 
-    idf_dict_hyp = defaultdict(lambda: 1.)
-    
-    ref_embedding, ref_lens, ref_masks, ref_idf, ref_tokens = get_bert_embedding([reference], model, tokenizer, idf_dict_ref,device=device)
-    hyp_embedding, hyp_lens, hyp_masks, hyp_idf, hyp_tokens = get_bert_embedding([translation], model, tokenizer, idf_dict_hyp,device=device)
-   
-    ref_embedding = ref_embedding[-1]
-    hyp_embedding = hyp_embedding[-1]
-               
-    raw = torch.cat([ref_embedding, hyp_embedding], 1)            
-    raw.div_(torch.norm(raw, dim=-1).unsqueeze(-1) + 1e-30) 
-    
-    distance_matrix = batched_cdist_l2(raw, raw)
-    masks = torch.cat([ref_masks, hyp_masks], 1)        
-    masks = torch.einsum('bi,bj->bij', (masks, masks))
-    distance_matrix = masks * distance_matrix              
-
-    
-    i = 0
-    c1 = np.zeros(raw.shape[1], dtype=np.float32)
-    c2 = np.zeros(raw.shape[1], dtype=np.float32)
-    c1[:len(ref_idf[i])] = ref_idf[i]
-    c2[len(ref_idf[i]):] = hyp_idf[i]
-    
-    c1 = _safe_divide(c1, np.sum(c1))
-    c2 = _safe_divide(c2, np.sum(c2))
-    
-    dst = distance_matrix[i].double().cpu().numpy()
-
-    if is_flow:        
-        _, flow = emd_with_flow(c1, c2, dst)
-        new_flow = np.array(flow, dtype=np.float32)    
-        res = new_flow[:len(ref_tokens[i]), len(ref_idf[i]): (len(ref_idf[i])+len(hyp_tokens[i]))]
-    else:    
-        res = 1./(1. + dst[:len(ref_tokens[i]), len(ref_idf[i]): (len(ref_idf[i])+len(hyp_tokens[i]))]) 
-
-    r_tokens = ref_tokens[i]
-    h_tokens = hyp_tokens[i]
-    
-    fig, ax = plt.subplots(figsize=(len(r_tokens)*0.8, len(h_tokens)*0.8))
-    im = ax.imshow(res, cmap='Blues')
-    
-    ax.set_xticks(np.arange(len(h_tokens)))
-    ax.set_yticks(np.arange(len(r_tokens)))
-  
-    ax.set_xticklabels(h_tokens, fontsize=10)
-    ax.set_yticklabels(r_tokens, fontsize=10)
-    plt.xlabel("System Translation", fontsize=14)
-    plt.ylabel("Human Reference", fontsize=14)
-    plt.title("Flow Matrix", fontsize=14)
-    
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-             rotation_mode="anchor")
-
-#    for i in range(len(r_tokens)):
-#        for j in range(len(h_tokens)):
-#            text = ax.text(j, i, '{:.2f}'.format(res[i, j].item()),
-#                           ha="center", va="center", color="k" if res[i, j].item() < 0.6 else "w")    
-    fig.tight_layout()
-    plt.show()
 
 def sentence_score(hypothesis: str, references: List[str], trace=False):
     
