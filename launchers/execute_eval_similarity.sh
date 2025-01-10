@@ -65,7 +65,7 @@ for dataset in "${DATASETS[@]}";do
             #modelname="Experimento6-Annealing-3Epoch"
             job_name="similarity_${date}_${modelname}_${dataset}_${language}_${FEWSHOT_NUM}fewshot_${SHOW_OPTIONS}options"
             echo "Launching job $job_name"
-            sbatch -J "$job_name" launch_task.sh $model $dataset $language $SHOW_OPTIONS $FEWSHOT_NUM $CACHE_DIR $HF_TOKEN
+            sbatch -J "$job_name" launch_sim_eval.sh $model $dataset $language $SHOW_OPTIONS $FEWSHOT_NUM $CACHE_DIR $HF_TOKEN
         done
     done
 done
