@@ -1,5 +1,5 @@
 # Similarity Framework
-A tool for evaluating LLMs using similarity measures between embeddings.
+A tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
 
 > [!NOTE]  
 > Currently, the tool is designed for use on the Cesga server. A standalone version for other servers will be available soon.
@@ -10,7 +10,7 @@ A tool for evaluating LLMs using similarity measures between embeddings.
     ```sh install.sh```
 2. Edit the environment variables in the file ```./configs/.env```.
 
-## How to Perform Cosine/MoverScore/BertScore Evaluations (QA Datasets)
+## How to Perform Similarity Evaluations
 
 1. Load the evaluation environment.
 2. Navigate to the ```./launchers``` folder.
@@ -21,7 +21,7 @@ A tool for evaluating LLMs using similarity measures between embeddings.
     - **FEWSHOT_NUM**: Number of few-shot examples. To run evaluations without few-shot, set this to 0.
 4. Run the script using ```sh execute_eval_similarity.sh```, which will launch processes in the Cesga queues (one for each dataset/model/language combination).
 
-## How to Perform Minicons/Surprisal Evaluations
+## How to Perform Surprisal Evaluations
 
 1. Load the evaluation environment.
 2. Navigate to the ```./launchers``` folder.
