@@ -1,11 +1,11 @@
 from datasets import DownloadConfig, load_dataset
-from typing import Union, List
+from typing import List
 import yaml
 import os
 import random
 
 # Load the tasks from the yaml file----------------
-yaml_tasks_path = f'{os.path.dirname(__file__)}/tasks_ubication.yaml'
+yaml_tasks_path = f'./configs/tasks_ubication.yaml'
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         try:
@@ -26,18 +26,20 @@ class Task:
     Base class for different tasks.
     """
 
-    def __init__(self, name, lang, splitPrompt, cache="./cache", token=""):
+    def __init__(self, name, dataloader, lang, splitPrompt, cache="./cache", token=""):
         """
         Initializes a Task object.
 
         Args:
             name (str): The name of the task.
+            dataloader (str): The path to the dataloader or to HF ubication.
             lang (str): The language of the task.
             splitPrompt (str): The split prompt for the task.
             cache (str, optional): The cache directory. Defaults to "./cache".
             token (str, optional): HF token to access private datasets. Defaults to "".
         """
         self.name = name
+        self.dataloader = dataloader
         self.lang = lang
         self.dataset = None
         self.splitPrompt = splitPrompt
@@ -69,7 +71,7 @@ class Task:
         Returns:
             str: The string representation of the Task object.
         """
-        return f"Data(name={self.name}, lang={self.lang}, splitPrompt={self.splitPrompt}, cache={self.cache})"
+        return f"Data(name={self.name}, dataloader={self.dataloader}, lang={self.lang}, splitPrompt={self.splitPrompt}, cache={self.cache})"
 
     def build_prompt(self, example, show_answer, show_options) -> str:
         """
@@ -94,7 +96,7 @@ class Task:
         """
         raise NotImplementedError
 
-    def get_correct_option(self, example) -> Union[str, List[str]]:
+    def get_correct_option(self, example) -> str:
         """
         Gets the correct option for the given example.
 
@@ -102,7 +104,7 @@ class Task:
             example (dict): The example data.
 
         Returns:
-            str|List[str]: The correct or the correct options.
+            str: The correct option.
         """
         raise NotImplementedError
     
@@ -128,6 +130,7 @@ class Belebele(Task):
 
         super().__init__(
             "belebele",
+            "dataloaders/belebele.py",
             "gl",
             "RESPOST")
     
@@ -135,6 +138,7 @@ class Belebele(Task):
 
         super().__init__(
             "belebele",
+            "dataloaders/belebele.py",
             "gl",
             "RESPOST",
             cache)
@@ -142,6 +146,7 @@ class Belebele(Task):
     def __init__(self, lang, cache):
         super().__init__(
             "belebele",
+            None,
             lang,
             "RESPOST",
             cache)
@@ -211,7 +216,6 @@ class Belebele(Task):
         print("DATASET CARGADO!")
         return self.dataset
     
-    
 
 class OpenBookQA(Task):
     """
@@ -222,6 +226,7 @@ class OpenBookQA(Task):
 
         super().__init__(
             "openbookqa",
+            "dataloaders/openbookqa.py",
             "gl",
             "RESPOST")
     
@@ -229,6 +234,7 @@ class OpenBookQA(Task):
 
         super().__init__(
             "openbookqa",
+            "dataloaders/openbookqa.py",
             "gl",
             "RESPOST",
             cache)
@@ -236,6 +242,7 @@ class OpenBookQA(Task):
     def __init__(self, lang, cache, token):
         super().__init__(
             "openbookqa",
+            None,
             lang,
             "RESPOST",
             cache,
@@ -294,7 +301,7 @@ class OpenBookQA(Task):
         self.dataset = load_dataset(hf_dataset, cache_dir = self.cache, download_config=DownloadConfig(token=self.token))["test"]
         print("DATASET CARGADO!")
         return self.dataset
-    
+
 class VeritasQA(Task):
     """
     Class for the VeritasQA task.
@@ -366,3 +373,4 @@ class VeritasQA(Task):
         print(f"DATASET: {repo} - {lang_subset}")
         self.dataset = load_dataset(repo, cache_dir = self.cache)[lang_subset]
         return self.dataset
+    

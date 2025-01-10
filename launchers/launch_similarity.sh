@@ -23,7 +23,7 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_gr2_experiment6_12-12-24_21-11/checkpoint-244"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 )
 
 DATASETS=(
@@ -40,7 +40,7 @@ LANGUAGES=(
 )
 
 SHOW_OPTIONS="True"
-FEWSHOT_NUM=0
+FEWSHOT_NUM=5
 ############################################################################################################
 
 # Load the environment variables from the .env file

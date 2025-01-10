@@ -7,8 +7,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=32
-#SBATCH -o ../logs_surprisal/Carvalho-Llama_Minicons_Calame-PT_%j.out
-#SBATCH -e ../logs_surprisal/Carvalho-Llama_Minicons_Calame-PT_%j.err
+#SBATCH -o ../logs_surprisal/Carvalho-Llama_89_Minicons_Calame-PT_%j.out
+#SBATCH -e ../logs_surprisal/Carvalho-Llama_89_Minicons_Calame-PT_%j.err
 #SBATCH -t 45:00
 
 declare -a MODELS=(
@@ -38,7 +38,8 @@ declare -a MODELS=(
     #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment5_12-06-24_20-00/checkpoint-2453"
     #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/CarballoLlama_annealing_experiment6_12-09-24_18-18/checkpoint-122"
     #"meta-llama/Llama-3.1-8B-Instruct"
-    "/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama"
+    #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama"
+    "/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 )
 
 cd ..
@@ -58,9 +59,9 @@ if [ -z "$CACHE_DIR" ]; then
 fi
 #------------------------------------------------------------
 
-echo "Launching minicons test for Calame-PT------------------"
+echo "Launching surprisal test for Calame-PT------------------"
 for model in "${MODELS[@]}"; do
-    python3 eval_minicons.py \
+    python3 eval_surprisal.py \
         --model $model \
         --cache $CACHE_DIR \
         --token $HF_TOKEN \

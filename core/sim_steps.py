@@ -1,12 +1,10 @@
-from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
-import evaluate
-import tasks.tasks_sim_v2 as tasks_sim_v2
+from core.sim_tasks import Task
+import utils.metrics as sim_metrics
 import torch
-from scipy.spatial.distance import cosine
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel
+import numpy as np
 import random
 import csv
-import numpy as np
-import argparse
 import re
 import os
 import logging
@@ -23,69 +21,37 @@ def load_yaml(file_path):
             print(f"Error loading YAML file: {exc}")
             return None
 bertmodels_yaml = load_yaml(yaml_bertmodels_path)
-#-- Cálculo da similaridade ----------------------------------------------
 
-#- Cálculo da similaridade entre dúas oracións ----------------------------------------------
-def cosine_score(tokenizer, model, sentence1, sentence2):
-    # Tokenização
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    tokenizer.pad_token = tokenizer.eos_token
-    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True).to(device)
-    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True).to(device)
+class EvaluatingModel():
+    def __init__(self, model_id, cache, tokenHF):
+        self.model_id = model_id
+        self.cache = cache
+        self.tokenHF = tokenHF
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # gerando embeddings para cada frase
-    with torch.no_grad():
-        outputs1 = model(**inputs1)
-        outputs2 = model(**inputs2)
-
-    # usamos só a última camada
-    embeddings1 = outputs1.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
-    embeddings2 = outputs2.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
-
-    #  coseno
-    similarity_score = 1 - cosine(embeddings1, embeddings2)
-    return similarity_score
-
-def mover_score(task,generation, reference):
-    os.environ['MOVERSCORE_MODEL'] = bertmodels_yaml[task.lang]
-    from moverscore_v2 import sentence_score
-
-    moverscore = sentence_score(generation, [reference], trace=False)
-    return moverscore
-
-def compute_sentence_similarity(task,metric, tokenizer, model, sentence1, sentence2):
+#-- Computation of similarity metrics ----------------------------------------------
+def compute_sentence_similarity(task:Task, metric, tokenizer, model, sentence1, sentence2):
 
     if metric == "cosine":
-        return cosine_score(tokenizer, model, sentence1, sentence2)
+        return sim_metrics.cosine_score(tokenizer, model, sentence1, sentence2)
     elif metric == "moverscore":
-        return mover_score(task,sentence1, sentence2)
+        bert_model = bertmodels_yaml[task.lang]
+        return sim_metrics.mover_score(bert_model,sentence1, sentence2)
     else:
         raise NotImplementedError
-
-#- Cálculo da similaridade entre dous corpus de oracións ----------------------------------------------
-def bert_score(task,generations, references, print_results=False):
-    logging.info(f"Evaluating BERT Score...")
-    bertscore = evaluate.load("bertscore")
-    bertscore_results = bertscore.compute(predictions=generations, references=references, 
-                                model_type= bertmodels_yaml[task.lang], idf=True, num_layers = 11, lang=task.lang)
-    if print_results:
-        for i in range(len(generations)):
-            print(f'Reference {i}: {references[i]}')
-            print(f'Generated {i}: {generations[i]}')
-            print(f'Bert Score {i}: [precision: {np.mean(bertscore_results["precision"][i]).round(4)}, recall: {np.mean(bertscore_results["recall"][i]).round(4)}, f1: {np.mean(bertscore_results["f1"][i]).round(4)}]')
-            print(f'-----------------------')
-    final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
-    logging.info(final_information)
-    print(f'-----------------------')
-    return final_information
-    
-def compute_corpus_similarity(task, metric, generations, references):
+   
+def compute_corpus_similarity(task:Task, metric, generations, references):
     if metric == "bertscore":
-        return bert_score(task, generations, references)
+        bert_model = bertmodels_yaml[task.lang]
+        bertscore_results = sim_metrics.bert_score(task.lang, bert_model, generations, references, print_results=False)
+        final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
+        logging.info(final_information)
+        print(f'-----------------------')
+        return final_information
     else:
         raise NotImplementedError
 
-def get_generated_answer(task,answer):
+def get_generated_answer(task:Task, answer):
     generated_answer =""
     lines = answer[0].split('\n')
     for line in reversed(lines):
@@ -95,7 +61,7 @@ def get_generated_answer(task,answer):
             break
     return generated_answer
 
-def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_reader, fewshots_examples_ids):
+def evaluate_sentence_similarity(task:Task, model, tokenizer, metric,dataset, csv_reader, fewshots_examples_ids):
     similarities = []
     correct_similarities = []
     offset_fewshot = 0
@@ -110,7 +76,7 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
         print(f"ID  {i} - Generated answer: {generated_answer}")
         j=1
         for original_answer in original_options:
-            similarity = compute_sentence_similarity(task,metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
+            similarity = compute_sentence_similarity(task, metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
             answer_similarities.append(similarity)
             if isinstance(correct_option, list): #This can handle multiple correct options (as in VeritasQA)
                 if original_answer in correct_option:
@@ -133,7 +99,7 @@ def evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_re
     print(f"---------------------------------")
     return final_information
 
-def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids):
+def evaluate_corpus_similarity(task:Task, metric, dataset, csv_reader, fewshots_examples_ids):
     offset_fewshot = 0
     generated_answer = []
     correct_options = []
@@ -157,14 +123,13 @@ def evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examp
     print(f"---------------------------------")
     return final_information
 
-def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
+def evaluate_similarity(task:Task, evaluated_model:EvaluatingModel, metrics, results_file):
     
     logging.info("\nStarting similarity evaluation between generated and original answers...")
-    tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
-    model = AutoModel.from_pretrained(model_id, cache_dir=task.cache, use_auth_token=tokenHF)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model.to(device)
     dataset = task.load_data()
+    model = AutoModel.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    model.to(evaluated_model.device)
     global_metrics_information = ""
     for metric in metrics:
         with open(results_file) as csv_file:
@@ -174,7 +139,7 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
             
             logging.info(f"Evaluating metric {metric}...")
             if metric in ["cosine","moverscore"]:
-                metric_information = evaluate_sentence_similarity(task, metric, tokenizer, model, dataset, csv_reader, fewshots_examples_ids)
+                metric_information = evaluate_sentence_similarity(task, model, tokenizer, metric, dataset, csv_reader, fewshots_examples_ids)
                 global_metrics_information += metric_information
             elif metric in ["bertscore"]:
                 metric_information = evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids)
@@ -186,34 +151,34 @@ def evaluate_similarity(task, metrics, model_id, results_file, tokenHF):
             
 
 #- Xeración de respostas ----------------------------------------------
-def generate_answers_no_pad(model, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "summarization-gl" else 100
+def generate_answers_no_pad(model, task:Task, tokenizer, prompt_ids):
+    max_new_tokens = 20 if task.name != "None" else 100
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
-        repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
+        repetition_penalty=0.5 if task.name != "None" else 1.2, 
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
-def generate_answers(model, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "summarization-gl" else 100
+def generate_answers(model, task:Task, tokenizer, prompt_ids):
+    max_new_tokens = 20 if task.name != "None" else 100
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
         pad_token_id=model.config.eos_token_id,
-        repetition_penalty=0.5 if task.name != "summarization-gl" else 1.2, 
+        repetition_penalty=0.5 if task.name != "None" else 1.2, 
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True)  
 
-def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cache, tokenHF):      
+def generate_completions(task:Task, evaluated_model:EvaluatingModel, results_file_name, examples_file):      
     answers = []
     fewshots_examples_ids = []
-    logging.info(f'Generating texts for model {model_id}...')
-    tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
-    model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache, use_auth_token=tokenHF)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model.to(device)
-    if model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
+    logging.info(f'Generating texts for model {evaluated_model.model_id}...')
+    model = AutoModelForCausalLM.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    model.to(evaluated_model.device)
+
+    if evaluated_model.model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
         generation_function = generate_answers_no_pad
     else:
         generation_function = generate_answers
@@ -227,7 +192,7 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
         else:
             max_position_embeddings = 2048
         print("Maximum block size: ", max_position_embeddings)
-        
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         for i, prompt in enumerate(csv_reader):
             if i in fewshots_examples_ids:
                 continue
@@ -238,10 +203,10 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
                 fewshots_examples_ids.append(i) #Trick to avoid missing examples during similarity evaluation
                 print(f"ID: {i} - Pass due to length of the prompt")
             else:
-                generated_sequence = generation_function(model, tokenizer, prompt_ids)
+                generated_sequence = generation_function(model, task, tokenizer, prompt_ids)
+                answers.append(generated_sequence)
                 parts = generated_sequence.rsplit(fr'{task.splitPrompt}.*:', 1)
                 answer = parts[-1].strip()
-                answers.append(generated_sequence)
                 print(f"ID: {i} - {answer}")
 
     with open(results_file_name, "w") as csv_file:
@@ -255,8 +220,8 @@ def xerar_e_gardar_textos(task, model_id, results_file_name, examples_file, cach
     logging.info(f'Generation finished! Texts saved in {results_file_name}...')
     print("----------------------------------------------------------------------")
 
-#- Construcción das preguntas----------------------------------------------
-def generate_examples(task, examples_file, fewshot_num=5, show_options=True):
+#-----------------------------------------------
+def create_examples(task, examples_file, fewshot_num=5, show_options=True):
     if os.path.exists(examples_file):
         logging.warning(f"The file {examples_file} already exists. Skipping example creation...")
         return
@@ -280,73 +245,6 @@ def generate_examples(task, examples_file, fewshot_num=5, show_options=True):
             csv_writer.writerow([question])
     logging.info(f"Exemples created succesfully! Examples saved in {examples_file}")
 
-#- Test de novas funcionalidades ----------------------------------------------
 def test():
     print("Test function")
     return
-
-#-- Execución ----------------------------------------------
-
-# Custom action to handle --token without a value
-class OptionalString(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        if values is None:
-            setattr(namespace, self.dest, None)
-        else:
-            setattr(namespace, self.dest, values)
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    parser = argparse.ArgumentParser(description='Evaluation of QA datasets using similarity')
-    # General arguments
-    parser.add_argument('--dataset', type=str, help='Dataset to evaluate (Belebele only)')
-    parser.add_argument('--model', type=str, help='Model to use for text generation')
-    parser.add_argument('--cache', type=str, help='Directory where cache data will be stored')
-    parser.add_argument('--token', type=str, nargs='?', default=None, action=OptionalString, help='Hugging Face authentication token')
-    parser.add_argument('--test', action='store_true', help='Test functionalities')
-    parser.add_argument('--language', type=str, help='Dataset language')
-    # Example creation arguments
-    parser.add_argument('--create_examples', action='store_true', help='Generate examples')
-    parser.add_argument('--fewshot_num', type=int, help='Number of few-shots to generate (default is 5)')
-    parser.add_argument('--examples_file', type=str, help='Name of the examples file')
-    parser.add_argument('--show_options', type=lambda x: (str(x).lower() == 'true'), help='Include answer options when generating examples')
-    # Generation arguments
-    parser.add_argument('--generate_answers', action='store_true', help='Generate answers for the created examples')
-    parser.add_argument('--results_file', type=str, help='Name of the results file')
-    # Evaluation arguments
-    parser.add_argument('--evaluate_similarity', action='store_true', help='Evaluate similarity between generated and original answers')
-    parser.add_argument('--metrics', type=str, nargs='+', help='Metrics to use for similarity evaluation')
-
-    args = parser.parse_args()
-    print(args)
-
-    if args.test:
-        print("Test funcionalities")
-        test()
-        exit()
-
-    if args.dataset == "belebele":
-        task = tasks_sim_v2.Belebele(lang=args.language, cache=args.cache)
-
-    elif args.dataset == "openbookqa":
-        task = tasks_sim_v2.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
-    
-    if args.dataset == "veritasqa":
-        task = tasks_sim_v2.VeritasQA(lang=args.language, cache=args.cache)
-
-    else:
-        exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA, VeritasQA]")
-
-    if args.create_examples:
-        generate_examples(task, examples_file=args.examples_file, fewshot_num=args.fewshot_num, show_options=args.show_options)
-    
-    if args.generate_answers:
-        xerar_e_gardar_textos(task, args.model, args.results_file, args.examples_file, args.cache, args.token)
-    
-    if args.evaluate_similarity:
-        supported_metrics = ["cosine","bertscore","moverscore"]
-        for metric in args.metrics:
-            if metric not in supported_metrics:
-                exit(f"Unsupported metric: {metric}. Currently implemented metrics are {supported_metrics}")
-        evaluate_similarity(task, args.metrics, args.model, args.results_file, args.token)
-        exit()
