@@ -4,7 +4,7 @@ import yaml
 import os
 
 # Load the tasks from the yaml file----------------
-yaml_tasks_path = f'{os.path.dirname(__file__)}/configs/tasks_ubication.yaml'
+yaml_tasks_path = f'./configs/tasks_ubication.yaml'
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         try:

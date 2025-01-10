@@ -199,7 +199,7 @@ def generate_completions(task:Task, evaluated_model:EvaluatingModel, results_fil
                 fewshots_examples_ids.append(i) #Trick to avoid missing examples during similarity evaluation
                 print(f"ID: {i} - Pass due to length of the prompt")
             else:
-                generated_sequence = generation_function(model, tokenizer, prompt_ids)
+                generated_sequence = generation_function(model, task, tokenizer, prompt_ids)
                 answers.append(generated_sequence)
                 parts = generated_sequence.rsplit(fr'{task.splitPrompt}.*:', 1)
                 answer = parts[-1].strip()
