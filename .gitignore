@@ -1,8 +1,8 @@
-cache/*
-generated_files/*
-logs_similarity/*
-logs_surprisal/*
-texts/*
+cache
+generated_files
+logs_similarity
+logs_surprisal
+texts
 configs/.env
-tasks/__pycache__/*
-__pycache__/*
+core/__pycache__/*
+utils/__pycache__/*
