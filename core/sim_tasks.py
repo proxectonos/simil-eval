@@ -26,20 +26,18 @@ class Task:
     Base class for different tasks.
     """
 
-    def __init__(self, name, dataloader, lang, splitPrompt, cache="./cache", token=""):
+    def __init__(self, name, lang, splitPrompt, cache="./cache", token=""):
         """
         Initializes a Task object.
 
         Args:
             name (str): The name of the task.
-            dataloader (str): The path to the dataloader or to HF ubication.
             lang (str): The language of the task.
             splitPrompt (str): The split prompt for the task.
             cache (str, optional): The cache directory. Defaults to "./cache".
             token (str, optional): HF token to access private datasets. Defaults to "".
         """
         self.name = name
-        self.dataloader = dataloader
         self.lang = lang
         self.dataset = None
         self.splitPrompt = splitPrompt
@@ -126,27 +124,9 @@ class Belebele(Task):
     Class for the Belebele task.
     """
 
-    def __init__(self):
-
-        super().__init__(
-            "belebele",
-            "dataloaders/belebele.py",
-            "gl",
-            "RESPOST")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "belebele",
-            "dataloaders/belebele.py",
-            "gl",
-            "RESPOST",
-            cache)
-
     def __init__(self, lang, cache):
         super().__init__(
             "belebele",
-            None,
             lang,
             "RESPOST",
             cache)
@@ -201,8 +181,8 @@ class Belebele(Task):
     
     def load_data(self):
         data_yaml = load_yaml(yaml_tasks_path)
-        openbookqa_dict = convert_to_dict(data_yaml['belebele'])
-        hf_dataset = openbookqa_dict[self.lang]
+        belebele_dict = convert_to_dict(data_yaml['belebele'])
+        hf_dataset = belebele_dict[self.lang]
         print(f"DATASET: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
@@ -221,28 +201,10 @@ class OpenBookQA(Task):
     """
     Class for the OpenBookQA task.
     """
-
-    def __init__(self):
-
-        super().__init__(
-            "openbookqa",
-            "dataloaders/openbookqa.py",
-            "gl",
-            "RESPOST")
-    
-    def __init__(self, cache):
-
-        super().__init__(
-            "openbookqa",
-            "dataloaders/openbookqa.py",
-            "gl",
-            "RESPOST",
-            cache)
     
     def __init__(self, lang, cache, token):
         super().__init__(
             "openbookqa",
-            None,
             lang,
             "RESPOST",
             cache,
@@ -363,8 +325,8 @@ class VeritasQA(Task):
     
     def load_data(self):
         data_yaml = load_yaml(yaml_tasks_path)
-        openbookqa_dict = convert_to_dict(data_yaml['veritasqa'])
-        hf_dataset = openbookqa_dict[self.lang]
+        veritas_dict = convert_to_dict(data_yaml['veritasqa'])
+        hf_dataset = veritas_dict[self.lang]
         print(f"DATASET: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
