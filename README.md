@@ -10,7 +10,7 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
     ```sh install.sh```
 2. Edit the environment variables in the file ```./configs/.env```.
 
-## HOWTO Perform Evaluations in SLURM clusters
+## Perform Evaluations in SLURM clusters
 
 ### Similarity Evaluations
 1. Load the evaluation environment.
@@ -30,12 +30,12 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
     - **MODELS**: Models to evaluate. These can be references from HuggingFace or local paths.
 4. Run the script using ``sh execute_eval_surprisal``, which will launch processes in the Cesga queues (one for each model).
 
-## HOWTO Perform evaluations in own computer/server
+## Perform evaluations in own computer/server
 
 ### Similarity Evaluations
 1. Load the evaluation environment.
-2. Execute the following command, using the apropiate parameters:
-   ```
+2. Execute the following command, using the apropriate parameters:
+```
    python3 eval_similarity.py \
     --dataset $DATASET \
     --cache $CACHE_DIR \
@@ -51,13 +51,13 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
     --results_file $RESULTS_FILE \
     --evaluate_similarity \
     --metrics cosine moverscore bertscore
-  ```
+```
 
 ### Surprisal Evaluations in own computer/server
 1. Load the evaluation environment.
-2. Execute the following command, using the apropiate parameters:
+2. Execute the following command, using the apropriate parameters:
 ```
-python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset [cola|calame]--lang $LANG --token $HF_TOKEN
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET --lang $LANG --token $HF_TOKEN
 ```
 
 ## Tool Features
