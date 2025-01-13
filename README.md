@@ -10,8 +10,9 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
     ```sh install.sh```
 2. Edit the environment variables in the file ```./configs/.env```.
 
-## How to Perform Similarity Evaluations
+## HOWTO Perform Evaluations in SLURM clusters
 
+### Similarity Evaluations
 1. Load the evaluation environment.
 2. Navigate to the ```./launchers``` folder.
 3. Update the following fields in the execution file ```execute_eval_similarity.es```:
@@ -21,13 +22,43 @@ A tool for evaluating LLMs using similarity measures between embeddings and surp
     - **FEWSHOT_NUM**: Number of few-shot examples. To run evaluations without few-shot, set this to 0.
 4. Run the script using ```sh execute_eval_similarity.sh```, which will launch processes in the Cesga queues (one for each dataset/model/language combination).
 
-## How to Perform Surprisal Evaluations
+### Surprisal Evaluations
 
 1. Load the evaluation environment.
 2. Navigate to the ```./launchers``` folder.
 3. Update the following fields in the execution file ```execute_eval_surprisal.sh```:
     - **MODELS**: Models to evaluate. These can be references from HuggingFace or local paths.
-4. Run the script using ```sh execute_eval_surprisal``, which will launch processes in the Cesga queues (one for each model).
+4. Run the script using ``sh execute_eval_surprisal``, which will launch processes in the Cesga queues (one for each model).
+
+## HOWTO Perform evaluations in own computer/server
+
+### Similarity Evaluations
+1. Load the evaluation environment.
+2. Execute the following command, using the apropiate parameters:
+   ```
+   python3 eval_similarity.py \
+    --dataset $DATASET \
+    --cache $CACHE_DIR \
+    --token $TOKEN_HF \
+    --model $MODEL \
+    --language $LANGUAGE \
+    --evaluate_similarity \
+    --create_examples \
+    --fewshot_num $FEWSHOT_NUM \
+    --show_options $SHOW_OPTIONS \
+    --examples_file $EXAMPLES_FILE \
+    --generate_answers \
+    --results_file $RESULTS_FILE \
+    --evaluate_similarity \
+    --metrics cosine moverscore bertscore
+  ```
+
+### Surprisal Evaluations in own computer/server
+1. Load the evaluation environment.
+2. Execute the following command, using the apropiate parameters:
+```
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset [cola|calame]--lang $LANG --token $HF_TOKEN
+```
 
 ## Tool Features
 
