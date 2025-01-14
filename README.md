@@ -1,8 +1,8 @@
-# Similarity Framework
-A tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
+# similaridade-eval
+Tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
 
 > [!NOTE]  
-> Currently, the tool is designed for use on the Cesga server. A standalone version for other servers will be available soon.
+> This tool is extensively tested in a cluster managed by SLURM. It can be used in other environments, but some modifications may be necessary.
 
 ## Setup
 
