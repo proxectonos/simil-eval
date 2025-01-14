@@ -1,5 +1,5 @@
-from SimilarityTask import SimilarityTask
-from SimilarityTask import load_yaml, convert_to_dict
+from core.SimilarityTask import SimilarityTask
+from core.SimilarityTask import load_yaml, convert_to_dict
 from datasets import load_dataset, DownloadConfig
 
 class Openbookqa(SimilarityTask):

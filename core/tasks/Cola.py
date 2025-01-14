@@ -1,4 +1,4 @@
-from SurprisalTask import SurprisalTask
+from core.SurprisalTask import SurprisalTask
 from datasets import load_dataset
 
 class Cola(SurprisalTask):

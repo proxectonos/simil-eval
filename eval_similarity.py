@@ -47,13 +47,13 @@ if __name__ == "__main__":
         exit()
 
     if args.dataset == "belebele":
-        task = Belebele(lang=args.language, cache=args.cache)
+        task = Belebele.Belebele(lang=args.language, cache=args.cache)
 
     elif args.dataset == "openbookqa":
-        task = Openbookqa(lang=args.language, cache=args.cache, token=args.token)
+        task = Openbookqa.Openbookqa(lang=args.language, cache=args.cache, token=args.token)
 
     elif args.dataset == "veritasqa":
-        task = Veritasqa(lang=args.language, cache=args.cache)
+        task = Veritasqa.Veritasqa(lang=args.language, cache=args.cache)
 
     else:
         exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA]")

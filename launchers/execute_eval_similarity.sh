@@ -11,7 +11,7 @@ MODELS=(
 #"proxectonos/Llama-3.1-Carballo"
 #"meta-llama/Llama-3.1-8B"
 #"meta-llama/Llama-3.1-8B-Instruct"
-#"BSC-LT/salamandra-2b"
+"BSC-LT/salamandra-2b"
 #"BSC-LT/salamandra-7b"
 #"BSC-LT/salamandraTA-2B"
 #"irlab-udc/Llama-3.1-8B-Instruct-Galician"
@@ -23,7 +23,7 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_gr2_experiment6_12-12-24_21-11/checkpoint-244"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
+#"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 )
 
 DATASETS=(
@@ -33,10 +33,10 @@ DATASETS=(
 
 LANGUAGES=(
     "gl"
-    "cat"
-    "en"
-    "es"
-    "pt"
+    #"cat"
+    #"en"
+    #"es"
+    #"pt"
 )
 
 SHOW_OPTIONS="True"
