@@ -1,4 +1,4 @@
-from core.sim_tasks import Task
+from core.SimilarityTask import Task
 import utils.metrics as sim_metrics
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel

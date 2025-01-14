@@ -1,4 +1,4 @@
-from core.sur_tasks import Cola, Calame
+from core.tasks import Cola, Calame
 from core.sur_steps import surprisal_score_cola, surprisal_score_calame
 from core.sur_steps import get_surprisal_scorer
 import logging
