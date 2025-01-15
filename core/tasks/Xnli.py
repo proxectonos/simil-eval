@@ -19,7 +19,7 @@ class Xnli(SurprisalTask):
         elif self.lang == "es":
             self.dataset_good, self.dataset_bad = self.__load_escola()
         else:
-            print("CoLA language not suported...")
+            print("XNLI language not suported...")
             exit()
 
     def __load_gl(self):
