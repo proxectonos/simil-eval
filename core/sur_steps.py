@@ -38,31 +38,6 @@ Difference between means (bad-good): {difference_mean}
 {good_mean},{bad_mean},{difference_mean}
 {"#"*40}""")
     
-def surprisal_score_xlni(model_scorer, model_name, dataset_contradiction, dataset_entailment, dataset_neutral):
-    contradiction_scores = []
-    entailment_scores = []
-    neutral_scores = []
-    for contradiction in dataset_contradiction:
-        contradiction_score = get_surprisal(model_scorer, contradiction)
-        contradiction_scores.append(contradiction_score)
-    
-    for entailment in dataset_entailment:
-        entailment_score = get_surprisal(model_scorer, entailment)
-        entailment_scores.append(entailment_score)
-    
-    for neutral in dataset_neutral:
-        neutral_score = get_surprisal(model_scorer, neutral)
-        neutral_scores.append(neutral_score)
-
-    contradiction_mean = round(np.mean(contradiction_scores),4)
-    entailment_mean = round(np.mean(entailment_scores),4)
-    neutral_mean = round(np.mean(neutral_scores),4)
-    print(f"""Results for model: {model_name}
-Contradiction mean: {contradiction_mean}
-Entailment mean: {entailment_mean}
-Neutral mean: {neutral_mean}
-{"#"*40}""")
-    
 def test():
     print("Test function")
     return
