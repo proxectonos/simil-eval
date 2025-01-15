@@ -1,5 +1,5 @@
-from core.tasks import Cola, Calame
-from core.sur_steps import surprisal_score_cola, surprisal_score_calame
+from core.tasks import Cola, Calame, Xnli
+from core.sur_steps import surprisal_score_cola, surprisal_score_calame, surprisal_score_xlni
 from core.sur_steps import get_surprisal_scorer
 import logging
 import argparse
@@ -27,6 +27,10 @@ if __name__ == "__main__":
         cola_task = Cola.Cola(args.lang, args.cache)
         cola_task.load_evaluation_dataset()
         surprisal_score_cola(model_scorer, args.model, cola_task.dataset_good, cola_task.dataset_bad)
+    elif args.dataset == "xnli":
+        xnli_task = Xnli.Xnli(args.lang, args.cache)
+        xnli_task.load_evaluation_dataset()
+        surprisal_score_xlni(model_scorer, args.model, xnli_task.dataset_contradiction, xnli_task.dataset_entailment, xnli_task.dataset_neutral)
     else:
         print("Dataset not suported...")
         exit()

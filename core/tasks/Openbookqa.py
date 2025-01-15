@@ -57,8 +57,8 @@ class Openbookqa(SimilarityTask):
     
     def load_data(self):
         data_yaml = load_yaml()
-        openbookqa_dict = convert_to_dict(data_yaml['openbookqa'])
-        hf_dataset = openbookqa_dict[self.lang]
+        data_dict = convert_to_dict(data_yaml['openbookqa'])
+        hf_dataset = data_dict[self.lang]
         print(f"Dataset: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
