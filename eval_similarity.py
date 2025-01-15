@@ -1,4 +1,4 @@
-from core.tasks import Belebele, Openbookqa, Veritasqa, Summarization
+from core.tasks import Belebele, Openbookqa, Veritasqa, Summarization, Xstorycloze
 from core.sim_steps import EvaluatingModel
 from core.sim_steps import create_examples, generate_completions, evaluate_similarity
 import argparse
@@ -57,6 +57,9 @@ if __name__ == "__main__":
     
     elif args.dataset == "summarization":
         task = Summarization.Summarization(lang=args.language, cache=args.cache)
+    
+    elif args.dataset == "xstorycloze":
+        task = Xstorycloze.Xstorycloze(lang=args.language, cache=args.cache)
 
     else:
         exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA]")

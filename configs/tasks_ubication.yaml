@@ -20,3 +20,10 @@ veritasqa:
 
 summarization:
   - gl: /mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/eval_corpus/summarization/summarization.jsonl
+
+xstoryclose:
+  - gl: proxectonos/xstorycloze_gl
+  - en: [juletxara/xstory_cloze,en]
+  - cat: projecte-aina/xstorycloze_ca
+  - es: [juletxara/xstory_cloze,es]
+  - pt: proxectonos/xstorycloze_gl

@@ -1,4 +1,6 @@
-class SurprisalTask:
+from abc import ABC, abstractmethod
+
+class SurprisalTask(ABC):
     """
     Base class for surprisal tasks.
 
@@ -17,6 +19,10 @@ class SurprisalTask:
         self.lang = lang
         self.cache_dir = cache_dir
     
+    @abstractmethod
     def load_evaluation_dataset(self):
-        raise NotImplementedError
+        """
+        Loads the evaluation dataset. This method change a lot depending on the task.
+        """
+        pass
     
