@@ -1,4 +1,5 @@
 from typing import List
+from abc import ABC, abstractmethod
 import yaml
 
 # Load the tasks from the yaml file----------------
@@ -18,7 +19,7 @@ def convert_to_dict(list_of_dicts):
 
 #--------------------------------------------------
 
-class SimilarityTask:
+class SimilarityTask(ABC):
     """
     Base class for different tasks.
     """
@@ -68,6 +69,7 @@ class SimilarityTask:
         """
         return f"Data(name={self.name}, dataloader={self.dataloader}, lang={self.lang}, splitPrompt={self.splitPrompt}, cache={self.cache})"
 
+    @abstractmethod
     def build_prompt(self, example, show_answer, show_options) -> str:
         """
         Builds the prompt for the given example.
@@ -80,17 +82,9 @@ class SimilarityTask:
         Returns:
             str: The built prompt.
         """
-        raise NotImplementedError 
+        pass
     
-    def load(self):
-        """
-        Loads the dataset for the task.
-
-        Returns:
-            dataset: The loaded dataset.
-        """
-        raise NotImplementedError
-
+    @abstractmethod
     def get_correct_option(self, example) -> str:
         """
         Gets the correct option for the given example.
@@ -101,8 +95,9 @@ class SimilarityTask:
         Returns:
             str: The correct option.
         """
-        raise NotImplementedError
+        pass
     
+    @abstractmethod
     def get_options(self, example) -> List:
         """
         Gets the options for the given example.
@@ -113,7 +108,17 @@ class SimilarityTask:
         Returns:
             list: The options.
         """
-        raise NotImplementedError
+        pass
+    
+    @abstractmethod
+    def load_data(self) -> List[str]:
+        """
+        Loads the dataset for the task.
+
+        Returns:
+            List[str]: The elements of the loaded dataset.
+        """
+        pass
     
 
 

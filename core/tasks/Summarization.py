@@ -11,14 +11,14 @@ class Summarization(SimilarityTask):
         super().__init__(
             "summarization",
             lang,
-            "RESPOST",
+            "RESUM",
             cache)
 
-    def get_correct_option(self, example): #Necessary to make minimal changes in eval_similarity code
+    def get_correct_option(self, example):
         return example["summary"]
     
     def get_options(self, example):
-        raise NotImplementedError("This method is not implemented for this task")
+        return [example["summary"]]
 
     def build_prompt(self,example, show_answer, show_options = True):
 
@@ -39,6 +39,6 @@ class Summarization(SimilarityTask):
         data_yaml = load_yaml()
         veritas_dict = convert_to_dict(data_yaml['summarization'])
         dataset_path = veritas_dict[self.lang]
-        self.dataset = load_dataset('json', data_files=dataset_path)
+        self.dataset = load_dataset('json', data_files=dataset_path)["train"]
         print(self.dataset)
         return self.dataset

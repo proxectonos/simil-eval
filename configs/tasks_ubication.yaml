@@ -17,3 +17,6 @@ veritasqa:
   - en: [projecte-aina/veritasQA,en]
   - cat: [projecte-aina/veritasQA,ca]
   - es: [projecte-aina/veritasQA,es]
+
+summarization:
+  - gl: /mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/eval_corpus/summarization/summarization.jsonl

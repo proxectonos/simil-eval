@@ -152,7 +152,7 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
 
 #- Xeración de respostas ----------------------------------------------
 def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "None" else 100
+    max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
@@ -161,7 +161,7 @@ def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids):
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
 def generate_answers(model, task:SimilarityTask, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "None" else 100
+    max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,

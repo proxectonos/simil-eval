@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --nodes 1
 #SBATCH --mem=70G
-#SBATCH -t 2:00:00
+#SBATCH -t 45:00
 
 module --force purge
 module load cesga/2020

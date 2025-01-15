@@ -27,8 +27,10 @@ MODELS=(
 )
 
 DATASETS=(
-    "openbookqa"
+    #"openbookqa"
     #"belebele"
+    #"veritasqa"
+    "summarization"
 )
 
 LANGUAGES=(

@@ -5,7 +5,7 @@ MODELS=(
 #"proxectonos/Carballo-cerebras-1.3B"
 #"proxectonos/Carballo-bloom-1.3B"
 #"Nos-PT/Carvalho_pt-gl-1.3B"
-"google/gemma-2-2b"
+#"google/gemma-2-2b"
 #"NOVA-vision-language/GlorIA-1.3B"
 #"utter-project/EuroLLM-1.7B"
 #"proxectonos/Llama-3.1-Carballo"
