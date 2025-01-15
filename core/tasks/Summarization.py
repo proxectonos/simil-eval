@@ -21,7 +21,6 @@ class Summarization(SimilarityTask):
         return [example["summary"]]
 
     def build_prompt(self,example, show_answer, show_options = True):
-
         prompt = ""
         if show_options:
             if show_answer:
@@ -40,5 +39,4 @@ class Summarization(SimilarityTask):
         veritas_dict = convert_to_dict(data_yaml['summarization'])
         dataset_path = veritas_dict[self.lang]
         self.dataset = load_dataset('json', data_files=dataset_path)["train"]
-        print(self.dataset)
         return self.dataset

@@ -30,15 +30,16 @@ DATASETS=(
     #"openbookqa"
     #"belebele"
     #"veritasqa"
-    "summarization"
+    #"summarization"
+    "xstorycloze"
 )
 
 LANGUAGES=(
     "gl"
-    #"cat"
-    #"en"
-    #"es"
-    #"pt"
+    "cat"
+    "en"
+    "es"
+    "pt"
 )
 
 SHOW_OPTIONS="True"

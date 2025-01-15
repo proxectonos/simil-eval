@@ -61,13 +61,13 @@ class Veritasqa(SimilarityTask):
     
     def load_data(self):
         data_yaml = load_yaml()
-        veritas_dict = convert_to_dict(data_yaml['veritasqa'])
-        hf_dataset = veritas_dict[self.lang]
-        print(f"DATASET: {hf_dataset}")
+        data_dict = convert_to_dict(data_yaml['veritasqa'])
+        hf_dataset = data_dict[self.lang]
+        print(f"Dataset: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
         repo=hf_dataset[0]
         lang_subset=hf_dataset[1]
-        print(f"DATASET: {repo} - {lang_subset}")
+        print(f"Dataset: {repo} - {lang_subset}")
         self.dataset = load_dataset(repo, cache_dir = self.cache)[lang_subset]
         return self.dataset
