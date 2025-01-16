@@ -1,4 +1,4 @@
-import core.sim_tasks as sim_tasks
+from core.tasks import Belebele, Openbookqa, Veritasqa, Summarization, Xstorycloze
 from core.sim_steps import EvaluatingModel
 from core.sim_steps import create_examples, generate_completions, evaluate_similarity
 import argparse
@@ -47,13 +47,19 @@ if __name__ == "__main__":
         exit()
 
     if args.dataset == "belebele":
-        task = sim_tasks.Belebele(lang=args.language, cache=args.cache)
+        task = Belebele.Belebele(lang=args.language, cache=args.cache)
 
     elif args.dataset == "openbookqa":
-        task = sim_tasks.OpenBookQA(lang=args.language, cache=args.cache, token=args.token)
+        task = Openbookqa.Openbookqa(lang=args.language, cache=args.cache, token=args.token)
 
     elif args.dataset == "veritasqa":
-        task = sim_tasks.VeritasQA(lang=args.language, cache=args.cache)
+        task = Veritasqa.Veritasqa(lang=args.language, cache=args.cache)
+    
+    elif args.dataset == "summarization":
+        task = Summarization.Summarization(lang=args.language, cache=args.cache)
+    
+    elif args.dataset == "xstorycloze":
+        task = Xstorycloze.Xstorycloze(lang=args.language, cache=args.cache)
 
     else:
         exit("Task not supported. Currently implemented tasks are [Belebele, OpenBookQA]")

@@ -5,4 +5,5 @@ logs_surprisal
 texts
 configs/.env
 core/__pycache__/*
+core/tasks/__pycache__/*
 utils/__pycache__/*

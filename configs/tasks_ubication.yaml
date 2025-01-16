@@ -17,3 +17,13 @@ veritasqa:
   - en: [projecte-aina/veritasQA,en]
   - cat: [projecte-aina/veritasQA,ca]
   - es: [projecte-aina/veritasQA,es]
+
+summarization:
+  - gl: /mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/eval_corpus/summarization/summarization.jsonl
+
+xstorycloze:
+  - gl: proxectonos/xstorycloze_gl
+  - en: [juletxara/xstory_cloze,en]
+  - cat: projecte-aina/xstorycloze_ca
+  - es: [juletxara/xstory_cloze,es]
+  - pt: proxectonos/xstorycloze_gl

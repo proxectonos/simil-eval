@@ -1,4 +1,4 @@
-from core.sim_tasks import Task
+from core.SimilarityTask import SimilarityTask
 import utils.metrics as sim_metrics
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModel
@@ -30,7 +30,7 @@ class EvaluatingModel():
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
 #-- Computation of similarity metrics ----------------------------------------------
-def compute_sentence_similarity(task:Task, metric, tokenizer, model, sentence1, sentence2):
+def compute_sentence_similarity(task:SimilarityTask, metric, tokenizer, model, sentence1, sentence2):
 
     if metric == "cosine":
         return sim_metrics.cosine_score(tokenizer, model, sentence1, sentence2)
@@ -40,7 +40,7 @@ def compute_sentence_similarity(task:Task, metric, tokenizer, model, sentence1, 
     else:
         raise NotImplementedError
    
-def compute_corpus_similarity(task:Task, metric, generations, references):
+def compute_corpus_similarity(task:SimilarityTask, metric, generations, references):
     if metric == "bertscore":
         bert_model = bertmodels_yaml[task.lang]
         bertscore_results = sim_metrics.bert_score(task.lang, bert_model, generations, references, print_results=False)
@@ -51,7 +51,7 @@ def compute_corpus_similarity(task:Task, metric, generations, references):
     else:
         raise NotImplementedError
 
-def get_generated_answer(task:Task, answer):
+def get_generated_answer(task:SimilarityTask, answer):
     generated_answer =""
     lines = answer[0].split('\n')
     for line in reversed(lines):
@@ -61,7 +61,7 @@ def get_generated_answer(task:Task, answer):
             break
     return generated_answer
 
-def evaluate_sentence_similarity(task:Task, model, tokenizer, metric,dataset, csv_reader, fewshots_examples_ids):
+def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,dataset, csv_reader, fewshots_examples_ids):
     similarities = []
     correct_similarities = []
     offset_fewshot = 0
@@ -99,7 +99,7 @@ def evaluate_sentence_similarity(task:Task, model, tokenizer, metric,dataset, cs
     print(f"---------------------------------")
     return final_information
 
-def evaluate_corpus_similarity(task:Task, metric, dataset, csv_reader, fewshots_examples_ids):
+def evaluate_corpus_similarity(task:SimilarityTask, metric, dataset, csv_reader, fewshots_examples_ids):
     offset_fewshot = 0
     generated_answer = []
     correct_options = []
@@ -123,7 +123,7 @@ def evaluate_corpus_similarity(task:Task, metric, dataset, csv_reader, fewshots_
     print(f"---------------------------------")
     return final_information
 
-def evaluate_similarity(task:Task, evaluated_model:EvaluatingModel, metrics, results_file):
+def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, metrics, results_file):
     
     logging.info("\nStarting similarity evaluation between generated and original answers...")
     dataset = task.load_data()
@@ -151,8 +151,8 @@ def evaluate_similarity(task:Task, evaluated_model:EvaluatingModel, metrics, res
             
 
 #- Xeración de respostas ----------------------------------------------
-def generate_answers_no_pad(model, task:Task, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "None" else 100
+def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids):
+    max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
@@ -160,8 +160,8 @@ def generate_answers_no_pad(model, task:Task, tokenizer, prompt_ids):
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
-def generate_answers(model, task:Task, tokenizer, prompt_ids):
-    max_new_tokens = 20 if task.name != "None" else 100
+def generate_answers(model, task:SimilarityTask, tokenizer, prompt_ids):
+    max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
         max_new_tokens=max_new_tokens,
@@ -170,7 +170,7 @@ def generate_answers(model, task:Task, tokenizer, prompt_ids):
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True)  
 
-def generate_completions(task:Task, evaluated_model:EvaluatingModel, results_file_name, examples_file):      
+def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, results_file_name, examples_file):      
     answers = []
     fewshots_examples_ids = []
     logging.info(f'Generating texts for model {evaluated_model.model_id}...')

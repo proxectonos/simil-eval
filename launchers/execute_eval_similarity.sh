@@ -7,15 +7,15 @@ MODELS=(
 #"Nos-PT/Carvalho_pt-gl-1.3B"
 #"google/gemma-2-2b"
 #"NOVA-vision-language/GlorIA-1.3B"
-#"utter-project/EuroLLM-1.7B"
+# "utter-project/EuroLLM-1.7B"
 #"proxectonos/Llama-3.1-Carballo"
-#"meta-llama/Llama-3.1-8B"
-#"meta-llama/Llama-3.1-8B-Instruct"
-#"BSC-LT/salamandra-2b"
+# "meta-llama/Llama-3.1-8B"
+# "meta-llama/Llama-3.1-8B-Instruct"
+# "BSC-LT/salamandra-2b"
 #"BSC-LT/salamandra-7b"
-#"BSC-LT/salamandraTA-2B"
+# "BSC-LT/salamandraTA-2B"
 #"irlab-udc/Llama-3.1-8B-Instruct-Galician"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
+# "/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment2_10-16-24_12-20/checkpoint-8772"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment3_10-09-24_21-29/checkpoint-2266"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment4_10-25-24_14-47/checkpoint-9816"
@@ -23,20 +23,23 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_gr2_experiment6_12-12-24_21-11/checkpoint-244"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
+#"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 )
 
 DATASETS=(
-    "openbookqa"
+    #"openbookqa"
     #"belebele"
+    "veritasqa"
+    #"summarization"
+    #"xstorycloze"
 )
 
 LANGUAGES=(
     "gl"
-    "cat"
-    "en"
-    "es"
-    "pt"
+    #"cat"
+    #"en"
+    #"es"
+    #"pt"
 )
 
 SHOW_OPTIONS="True"

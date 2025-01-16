@@ -1,6 +1,6 @@
 from utils.surprisal import get_surprisal, get_surprisal_last_word
-import numpy as np
 from utils.surprisal import get_scorer
+import numpy as np
 
 def get_surprisal_scorer(model_name, cache_dir, tokenHF):
     model_scorer = get_scorer(model_name, cache_dir, tokenHF)

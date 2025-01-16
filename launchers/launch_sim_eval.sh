@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --nodes 1
 #SBATCH --mem=70G
-#SBATCH -t 2:00:00
+#SBATCH -t 45:00
 
 module --force purge
 module load cesga/2020
@@ -40,7 +40,7 @@ python3 eval_similarity.py \
     --fewshot_num $FEWSHOT_NUM \
     --show_options $SHOW_OPTIONS \
     --examples_file $EXAMPLES_FILE \
-    --generate_answers \
+    --generate_completions \
     --results_file $RESULTS_FILE \
     --evaluate_similarity \
     --metrics cosine moverscore bertscore
