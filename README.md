@@ -90,7 +90,7 @@ python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET -
 |  Belebele  | :heavy_check_mark:            | :heavy_check_mark: | :heavy_check_mark: |                    |
 |   CoLA     |                               |                    |                    | :heavy_check_mark: |
 |   Calame   |                               |                    |                    | :heavy_check_mark: |
-| VeritasQA  | :heavy_check_mark: | :heavy_check_mark: |                    |                    |
+| VeritasQA  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
 | XStoryCloze  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |                    |
 
 ### Datasets by Language
