@@ -27,3 +27,7 @@ xstorycloze:
   - cat: projecte-aina/xstorycloze_ca
   - es: [juletxara/xstory_cloze,es]
   - pt: proxectonos/xstorycloze_gl
+
+truthfulqa:
+  - gl: proxectonos/truthfulqa_gl
+  - en: truthfulqa/truthful_qa

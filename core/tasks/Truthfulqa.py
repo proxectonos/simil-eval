@@ -3,14 +3,14 @@ from core.SimilarityTask import load_yaml, convert_to_dict
 from datasets import load_dataset
 import random
 
-class Veritasqa(SimilarityTask):
+class Truthfulqa(SimilarityTask):
     """
-    Class for the VeritasQA task.
+    Class for the TruthfulQA task.
     """
     
     def __init__(self, lang, cache):
         super().__init__(
-            "veritasqa",
+            "truthfulqa",
             lang,
             "RESPOST",
             cache)
@@ -19,14 +19,10 @@ class Veritasqa(SimilarityTask):
         return example["best_answer"]
     
     def get_correct_options(self, example):
-        if ";" in example["correct_answers"]:
-            return example["correct_answers"].split(";")
-        return [example["correct_answers"]]
+        return example["correct_answers"]
 
     def get_incorrect_options(self, example):
-        if ";" in example["incorrect_answers"]:
-            return example["incorrect_answers"].split(";")
-        return [example["incorrect_answers"]]
+        return example["incorrect_answers"]
 
     def get_correct_option(self, example): #Necessary to make minimal changes in eval_similarity code
         return self.get_correct_options(example)
@@ -64,13 +60,10 @@ class Veritasqa(SimilarityTask):
     
     def load_data(self):
         data_yaml = load_yaml()
-        data_dict = convert_to_dict(data_yaml['veritasqa'])
+        data_dict = convert_to_dict(data_yaml['truthfulqa'])
         hf_dataset = data_dict[self.lang]
         print(f"Dataset: {hf_dataset}")
         if hf_dataset=="None":
             exit(f"Dataset not found for {self.name} and language {self.lang}")
-        repo=hf_dataset[0]
-        lang_subset=hf_dataset[1]
-        print(f"Dataset: {repo} - {lang_subset}")
-        self.dataset = load_dataset(repo, cache_dir = self.cache)[lang_subset]
+        self.dataset = load_dataset(hf_dataset, "generation",cache_dir = self.cache)["validation"]
         return self.dataset
