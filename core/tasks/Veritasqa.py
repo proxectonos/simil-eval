@@ -14,7 +14,10 @@ class Veritasqa(SimilarityTask):
             lang,
             "RESPOST",
             cache)
-        
+    
+    def get_best_answer(self, example):
+        return example["best_answer"]
+    
     def get_correct_options(self, example):
         if ";" in example["correct_answers"]:
             return example["correct_answers"].split(";")
