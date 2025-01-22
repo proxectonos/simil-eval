@@ -74,7 +74,7 @@ python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET -
 - **Multiple Choice QA**:
   - *OpenBookQA*: Four possible answers. A question is asked, and the correct answer must be selected.
   - *VeritasQA*: Between 4 and 10 possible options. A question is asked and the correct option must be chosen, but there are multiple correct options possible.
-  - *TruthfulQA: Similar to VeritasQA but focused in USA facts.
+  - *TruthfulQA*: Similar to VeritasQA but focused in USA facts.
 - **Reading Understanding**
   - *Belebele*: A context is provided with diverse information, followed by a question with 4 options where the correct answer can be deduced from the context.
   - *XStoryCloze*: A context is provided with diverse information, followed for two options that can complete the context. The model has to choose the *logical* option to continue the text.
