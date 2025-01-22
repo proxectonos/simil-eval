@@ -24,7 +24,7 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/1_Epoch"
 )
 
 # Load the environment variables from the .env file

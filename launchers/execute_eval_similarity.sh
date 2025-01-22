@@ -26,28 +26,28 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/big-training/45_percent"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/big-training/89_percent"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/1_Epoch"
 )
 
 DATASETS=(
-    #"openbookqa"
-    #"belebele"
+    "openbookqa"
+    "belebele"
     #"veritasqa"
     #"summarization"
     #"xstorycloze"
-    "truthfulqa"
+    #"truthfulqa"
 )
 
 LANGUAGES=(
     "gl"
-    #"cat"
+    "cat"
     "en"
-    #"es"
-    #"pt"
+    "es"
+    "pt"
 )
 
 SHOW_OPTIONS="True"
-FEWSHOT_NUM=5
+FEWSHOT_NUM=0
 ############################################################################################################
 
 # Load the environment variables from the .env file
