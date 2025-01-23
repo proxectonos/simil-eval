@@ -89,16 +89,15 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
             j +=1
         # Check if the maximum similarity is with one correct option
         max_similarity = max(answer_similarities)
-        if max_similarity > 0.0:  # Remove 0.0 similarity with all cases
-            if isinstance(correct_option, list):
-                if max_similarity in correct_similarities[-1]:
-                    correct_answers += 1
-            else:
-                if max_similarity == correct_similarities[-1]:
-                    correct_answers += 1
+        correct_sim_values = correct_similarities[-1] 
+        if not isinstance(correct_sim_values, list):
+                correct_sim_values = [correct_sim_values]
+        
+        if max_similarity in correct_sim_values and max_similarity > 0.0:  # Remove 0.0 similarity with all cases
+            correct_answers += 1
         similarities.append(np.mean(answer_similarities))
         print(f"    Mean score with question {i}: {similarities[-1]}")
-        print(f"    Score with correct option '{correct_option}': {correct_similarities[-1]}")
+        print(f"    Score with correct option '{correct_option}': {correct_sim_values}")
     final_information= f"--{metric.upper()} RESULTS--\n"
     final_information+= f"Global Mean similarity score: {np.mean(similarities)}\n"
     final_information+= f"Global Mean similarity score with correct options: {np.mean(correct_similarities)}\n"

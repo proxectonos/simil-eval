@@ -26,11 +26,11 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/big-training/45_percent"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/big-training/89_percent"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/1_Epoch"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/75_percent"
 )
 
 DATASETS=(
-    #"openbookqa"
+    "openbookqa"
     #"belebele"
     #"veritasqa"
     #"summarization"
