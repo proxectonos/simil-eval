@@ -36,7 +36,7 @@ class Summarization(SimilarityTask):
     
     def load_data(self):
         data_yaml = load_yaml()
-        veritas_dict = convert_to_dict(data_yaml['summarization'])
-        dataset_path = veritas_dict[self.lang]
+        data_dict = convert_to_dict(data_yaml['summarization'])
+        dataset_path = data_dict[self.lang]
         self.dataset = load_dataset('json', data_files=dataset_path)["train"]
         return self.dataset
