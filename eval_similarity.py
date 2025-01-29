@@ -1,4 +1,4 @@
-from core.tasks import Belebele, Openbookqa, Veritasqa, Summarization, Xstorycloze, Truthfulqa
+from core.tasks import Belebele, Openbookqa, Summarization, Xstorycloze, Truthfulqa_mc1, Veritasqa_mc1
 from core.sim_steps import EvaluatingModel
 from core.sim_steps import create_examples, generate_completions, evaluate_similarity
 import argparse
@@ -52,11 +52,11 @@ if __name__ == "__main__":
     elif args.dataset == "openbookqa":
         task = Openbookqa.Openbookqa(lang=args.language, cache=args.cache, token=args.token)
 
-    elif args.dataset == "veritasqa":
-        task = Veritasqa.Veritasqa(lang=args.language, cache=args.cache)
+    elif args.dataset == "veritasqa_mc1":
+        task = Veritasqa_mc1.Veritasqa_mc1(lang=args.language, cache=args.cache)
     
-    elif args.dataset == "truthfulqa":
-        task = Truthfulqa.Truthfulqa(lang=args.language, cache=args.cache)
+    elif args.dataset == "truthfulqa_mc1":
+        task = Truthfulqa_mc1.Truthfulqa_mc1(lang=args.language, cache=args.cache)
     
     elif args.dataset == "summarization":
         task = Summarization.Summarization(lang=args.language, cache=args.cache)
