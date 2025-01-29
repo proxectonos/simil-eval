@@ -20,11 +20,8 @@ MODELS=(
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment3_10-09-24_21-29/checkpoint-2266"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment4_10-25-24_14-47/checkpoint-9816"
 #"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment5_12-06-24_20-00/checkpoint-2453"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_gr2_experiment6_12-12-24_21-11/checkpoint-244"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_2Epochs_experiment6_12-13-24_09-53/checkpoint-488"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/89_percent"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training"
+"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
+#"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/1_Epoch"
 )
 
 # Load the environment variables from the .env file
