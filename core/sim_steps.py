@@ -74,6 +74,7 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
         correct_option = task.get_correct_option(example)
         original_options = task.get_options(example)
         print(f"ID  {i} - Generated answer: {generated_answer}")
+        # Compute similarity with all options, saving also the similarity with the correct(s) option(s)
         j=1
         for original_answer in original_options:
             similarity = compute_sentence_similarity(task, metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
@@ -86,11 +87,17 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
                     correct_similarities.append(similarity)
             print(f"    Similarity score with option {j}: {original_answer}: {similarity}")
             j +=1
-        if max(answer_similarities) == correct_similarities[-1] and max(answer_similarities) > 0.0: #Remove 0.0 similarity with all cases:
+        # Check if the maximum similarity is with one correct option
+        max_similarity = max(answer_similarities)
+        correct_sim_values = correct_similarities[-1] 
+        if not isinstance(correct_sim_values, list):
+                correct_sim_values = [correct_sim_values]
+        
+        if max_similarity in correct_sim_values and max_similarity > 0.0:  # Remove 0.0 similarity with all cases
             correct_answers += 1
         similarities.append(np.mean(answer_similarities))
         print(f"    Mean score with question {i}: {similarities[-1]}")
-        print(f"    Score with correct option '{correct_option}': {correct_similarities[-1]}")
+        print(f"    Score with correct option '{correct_option}': {correct_sim_values}")
     final_information= f"--{metric.upper()} RESULTS--\n"
     final_information+= f"Global Mean similarity score: {np.mean(similarities)}\n"
     final_information+= f"Global Mean similarity score with correct options: {np.mean(correct_similarities)}\n"
