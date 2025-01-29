@@ -30,7 +30,7 @@ MODELS=(
 )
 
 DATASETS=(
-    "openbookqa"
+    #"openbookqa"
     #"belebele"
     "veritasqa_mc1"
     #"summarization"
