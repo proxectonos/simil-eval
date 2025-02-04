@@ -31,7 +31,6 @@ class Truthfulqa_mc1(SimilarityTask):
         correct_options = self.get_correct_options(example)
         incorrect_options = self.get_incorrect_options(example)
         options = correct_options + incorrect_options
-        options = [option.strip() for option in options] #Remove leading and trailing whitespaces
         random.shuffle(options)
         return options
     
@@ -43,9 +42,9 @@ class Truthfulqa_mc1(SimilarityTask):
             formated_options = "\n".join([f"OPCION {i+1}: {option}" for i, option in enumerate(options)])
             if show_answer:
                 correct_option = self.get_best_answer(example)
-                prompt = f"""   PREGUNTA: {example['question']}\n{formated_options}\nRESPOSTA: {correct_option}\n"""
+                prompt = f"""PREGUNTA: {example['question']}\n{formated_options}\nRESPOSTA: {correct_option}\n"""
             else:
-                prompt = f"""   PREGUNTA: {example['question']}\n{formated_options}\nRESPOST"""
+                prompt = f"""PREGUNTA: {example['question']}\n{formated_options}\nRESPOST"""
         else:
             if show_answer:
                 correct_option = self.get_best_answer(example)
@@ -60,7 +59,7 @@ class Truthfulqa_mc1(SimilarityTask):
     
     def load_data(self):
         data_yaml = load_yaml()
-        data_dict = convert_to_dict(data_yaml['truthfulqa'])
+        data_dict = convert_to_dict(data_yaml['truthfulqa_mc1'])
         hf_dataset = data_dict[self.lang]
         print(f"Dataset: {hf_dataset}")
         if hf_dataset=="None":

@@ -43,7 +43,11 @@ def compute_sentence_similarity(task:SimilarityTask, metric, tokenizer, model, s
 def compute_corpus_similarity(task:SimilarityTask, metric, generations, references):
     if metric == "bertscore":
         bert_model = bertmodels_yaml[task.lang]
-        bertscore_results = sim_metrics.bert_score(task.lang, bert_model, generations, references, print_results=False)
+        bertscore_results = sim_metrics.bert_score(task.lang, 
+                                                   bert_model, 
+                                                   generations, 
+                                                   references, 
+                                                   print_results=False)
         final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
         logging.info(final_information)
         print(f'-----------------------')
@@ -77,7 +81,13 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
         # Compute similarity with all options, saving also the similarity with the correct(s) option(s)
         j=1
         for original_answer in original_options:
-            similarity = compute_sentence_similarity(task, metric, tokenizer, model, original_answer, generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (stange but it can happen)
+            if original_answer == "": continue
+            similarity = compute_sentence_similarity(task, 
+                                                     metric, 
+                                                     tokenizer, 
+                                                     model, 
+                                                     original_answer, 
+                                                     generated_answer) if generated_answer else 0.0 #Check if generated answer is empty (strange but it can happen)
             answer_similarities.append(similarity)
             if isinstance(correct_option, list): #This can handle multiple correct options (as in VeritasQA)
                 if original_answer in correct_option:
@@ -121,10 +131,16 @@ def evaluate_corpus_similarity(task:SimilarityTask, metric, dataset, csv_reader,
     logging.info(f"--{metric.upper()} RESULTS----------------")
     final_information = f"--{metric.upper()} RESULTS--\n"
     final_information+= f"Similarity with correct options: "
-    metric_values = compute_corpus_similarity(task, metric, generated_answer, correct_options)
+    metric_values = compute_corpus_similarity(task, 
+                                              metric, 
+                                              generated_answer, 
+                                              correct_options)
     final_information+= metric_values+"\n"
     final_information+= f"Similarity with all options: "
-    metric_values = compute_corpus_similarity(task, metric, generated_answer, original_options)
+    metric_values = compute_corpus_similarity(task, 
+                                              metric, 
+                                              generated_answer, 
+                                              original_options)
     final_information+= metric_values
     logging.info(final_information)
     print(f"---------------------------------")
@@ -134,8 +150,12 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
     
     logging.info("\nStarting similarity evaluation between generated and original answers...")
     dataset = task.load_data()
-    model = AutoModel.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
-    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    model = AutoModel.from_pretrained(evaluated_model.model_id, 
+                                      cache_dir=evaluated_model.cache, 
+                                      use_auth_token=evaluated_model.tokenHF)
+    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
+                                              cache_dir=evaluated_model.cache, 
+                                              use_auth_token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
     global_metrics_information = ""
     for metric in metrics:
@@ -146,10 +166,20 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
             
             logging.info(f"Evaluating metric {metric}...")
             if metric in ["cosine","moverscore"]:
-                metric_information = evaluate_sentence_similarity(task, model, tokenizer, metric, dataset, csv_reader, fewshots_examples_ids)
+                metric_information = evaluate_sentence_similarity(task, 
+                                                                  model, 
+                                                                  tokenizer, 
+                                                                  metric, 
+                                                                  dataset, 
+                                                                  csv_reader, 
+                                                                  fewshots_examples_ids)
                 global_metrics_information += metric_information
             elif metric in ["bertscore"]:
-                metric_information = evaluate_corpus_similarity(task, metric, dataset, csv_reader, fewshots_examples_ids)
+                metric_information = evaluate_corpus_similarity(task, 
+                                                                metric, 
+                                                                dataset, 
+                                                                csv_reader, 
+                                                                fewshots_examples_ids)
                 global_metrics_information += metric_information
             else:
                 raise NotImplementedError
@@ -181,8 +211,12 @@ def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, r
     answers = []
     fewshots_examples_ids = []
     logging.info(f'Generating texts for model {evaluated_model.model_id}...')
-    model = AutoModelForCausalLM.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
-    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, cache_dir=evaluated_model.cache, use_auth_token=evaluated_model.tokenHF)
+    model = AutoModelForCausalLM.from_pretrained(evaluated_model.model_id, 
+                                                 cache_dir=evaluated_model.cache, 
+                                                 use_auth_token=evaluated_model.tokenHF)
+    tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
+                                              cache_dir=evaluated_model.cache, 
+                                              use_auth_token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
 
     if evaluated_model.model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
@@ -210,7 +244,10 @@ def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, r
                 fewshots_examples_ids.append(i) #Trick to avoid missing examples during similarity evaluation
                 print(f"ID: {i} - Pass due to length of the prompt")
             else:
-                generated_sequence = generation_function(model, task, tokenizer, prompt_ids)
+                generated_sequence = generation_function(model, 
+                                                         task, 
+                                                         tokenizer, 
+                                                         prompt_ids)
                 answers.append(generated_sequence)
                 parts = generated_sequence.rsplit(fr'{task.splitPrompt}.*:', 1)
                 answer = parts[-1].strip()
@@ -241,14 +278,18 @@ def create_examples(task, examples_file, fewshot_num=5, show_options=True):
     fewshot_examples = ""
     for k in fewshots_examples_ids:
         example = task.dataset[k]
-        fewshot_examples += task.build_prompt(example, show_answer=True, show_options=show_options)
+        fewshot_examples += task.build_prompt(example, 
+                                              show_answer=True, 
+                                              show_options=show_options)
     with open(examples_file,"w") as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',')
         csv_writer.writerow(fewshots_examples_ids)
         for i, data in enumerate(task.dataset):
             if i in fewshots_examples_ids:
                 continue
-            question = fewshot_examples + task.build_prompt(data, show_answer=False, show_options=show_options)
+            question = fewshot_examples + task.build_prompt(data, 
+                                                            show_answer=False, 
+                                                            show_options=show_options)
             csv_writer.writerow([question])
     logging.info(f"Exemples created succesfully! Examples saved in {examples_file}")
 

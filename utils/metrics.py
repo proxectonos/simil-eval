@@ -8,8 +8,14 @@ import os
 def cosine_score(tokenizer, model, sentence1, sentence2):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer.pad_token = tokenizer.eos_token
-    inputs1 = tokenizer(sentence1, return_tensors="pt", padding=True, truncation=True).to(device)
-    inputs2 = tokenizer(sentence2, return_tensors="pt", padding=True, truncation=True).to(device)
+    inputs1 = tokenizer(sentence1, 
+                        return_tensors="pt", 
+                        padding=True, 
+                        truncation=True).to(device)
+    inputs2 = tokenizer(sentence2, 
+                        return_tensors="pt", 
+                        padding=True, 
+                        truncation=True).to(device)
 
     # Embedding generation
     with torch.no_grad():
@@ -34,8 +40,12 @@ def mover_score(bert_model, generation, reference):
 def bert_score(language, bert_model, generations, references, print_results=False):
     logging.info(f"Evaluating BERT Score...")
     bertscore = evaluate.load("bertscore")
-    bertscore_results = bertscore.compute(predictions=generations, references=references, 
-                                model_type= bert_model, idf=True, num_layers = 11, lang=language)
+    bertscore_results = bertscore.compute(predictions=generations, 
+                                          references=references, 
+                                          model_type= bert_model, 
+                                          idf=True, 
+                                          num_layers = 11, 
+                                          lang=language)
     if print_results:
         for i in range(len(generations)):
             print(f'Reference {i}: {references[i]}')

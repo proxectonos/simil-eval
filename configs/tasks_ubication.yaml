@@ -12,7 +12,7 @@ belebele:
   - es: [facebook/belebele,spa_Latn]
   - pt: [facebook/belebele,por_Latn]
 
-veritasqa:
+veritasqa_mc1:
   - gl: [projecte-aina/veritasQA,gl]
   - en: [projecte-aina/veritasQA,en]
   - cat: [projecte-aina/veritasQA,ca]
@@ -28,6 +28,6 @@ xstorycloze:
   - es: [juletxara/xstory_cloze,es]
   - pt: proxectonos/xstorycloze_gl
 
-truthfulqa:
+truthfulqa_mc1:
   - gl: proxectonos/truthfulqa_gl
   - en: truthfulqa/truthful_qa
