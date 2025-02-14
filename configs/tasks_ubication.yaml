@@ -19,8 +19,7 @@ veritasqa_mc1:
   - es: [projecte-aina/veritasQA,es]
 
 summarization:
-  - gl: /mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/eval_corpus/summarization/summarization.jsonl
-
+  - gl: proxectonos/summarization_gl
 xstorycloze:
   - gl: proxectonos/xstorycloze_gl
   - en: [juletxara/xstory_cloze,en]

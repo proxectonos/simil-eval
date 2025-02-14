@@ -2,36 +2,19 @@
 
 #CONFIGURATION -----------------------------------------------------------------
 MODELS=(
-"proxectonos/Carballo-cerebras-1.3B"
 "proxectonos/Carballo-bloom-1.3B"
-"Nos-PT/Carvalho_pt-gl-1.3B"
-"google/gemma-2-2b"
-"NOVA-vision-language/GlorIA-1.3B"
-"utter-project/EuroLLM-1.7B"
 "proxectonos/Llama-3.1-Carballo"
 "meta-llama/Llama-3.1-8B"
-#"meta-llama/Llama-3.1-8B-Instruct"
-# "BSC-LT/salamandra-2b"
-# "BSC-LT/salamandra-7b"
-# "BSC-LT/salamandraTA-2B"
-# "irlab-udc/Llama-3.1-8B-Instruct-Galician"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment2_10-16-24_12-20/checkpoint-8772"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment3_10-09-24_21-29/checkpoint-2266"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment4_10-25-24_14-47/checkpoint-9816"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment5_12-06-24_20-00/checkpoint-2453"
-"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-#"Nos-PT/Llama-Carvalho-PT"
-#"Nos-PT/Llama-Carvalho-PT_2Epochs"
-#"Nos-PT/Llama-Carvalho_1Epoch"
+"BSC-LT/salamandra-2b"
+"BSC-LT/salamandra-7b"
 )
 
 DATASETS=(
-    #"openbookqa"
-    #"belebele"
+    "openbookqa"
+    "belebele"
     #"veritasqa_mc1"
     #"summarization"
-    #"xstorycloze"
+    "xstorycloze"
     "truthfulqa_mc1"
 )
 

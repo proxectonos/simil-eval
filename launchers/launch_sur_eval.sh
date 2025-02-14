@@ -11,7 +11,6 @@
 #SBATCH -t 45:00
 
 module --force purge
-module load cesga/2020
 module load python/3.9.9
 source ../../eval_env/bin/activate
 

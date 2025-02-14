@@ -2,29 +2,11 @@
 
 #CONFIGURATION -----------------------------------------------------------------
 MODELS=(
-#"proxectonos/Carballo-cerebras-1.3B"
-#"proxectonos/Carballo-bloom-1.3B"
-#"Nos-PT/Carvalho_pt-gl-1.3B"
-#"google/gemma-2-2b"
-#"NOVA-vision-language/GlorIA-1.3B"
-#"utter-project/EuroLLM-1.7B"
-#"proxectonos/Llama-3.1-Carballo"
-#"meta-llama/Llama-3.1-8B"
-#"meta-llama/Llama-3.1-8B-Instruct"
-#"BSC-LT/salamandra-2b"
-#"BSC-LT/salamandra-7b"
-#"BSC-LT/salamandraTA-2B"
-#"irlab-udc/Llama-3.1-8B-Instruct-Galician"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment1_10-09-24_21-29/checkpoint-2224"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment2_10-16-24_12-20/checkpoint-8772"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment3_10-09-24_21-29/checkpoint-2266"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment4_10-25-24_14-47/checkpoint-9816"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Llama_experiment5_12-06-24_20-00/checkpoint-2453"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/llama_trainings/output/Experimento3_annealing_lr6_3Epochs_experiment6_12-18-24_02-52/checkpoint-1464"
-#"/mnt/netapp1/Proxecto_NOS/adestramentos/Carvalho-Llama/small-training/1_Epoch"
-#"Nos-PT/Llama-Carvalho-PT"
-#"Nos-PT/Llama-Carvalho-PT_2Epochs"
-#"Nos-PT/Llama-Carvalho_1Epoch"
+"proxectonos/Carballo-bloom-1.3B"
+"proxectonos/Llama-3.1-Carballo"
+"meta-llama/Llama-3.1-8B"
+"BSC-LT/salamandra-2b"
+"BSC-LT/salamandra-7b"
 )
 
 # Load the environment variables from the .env file
@@ -45,7 +27,7 @@ date=$(date '+%d-%m-%Y')
 
 for model in "${MODELS[@]}"; do
     modelname=${model##*/}
-    #modelname="Experimento6-Annealing-3Epoch"
+    #modelname="salamandra-7B"
     job_name="surprisal_${date}_${modelname}"
     echo "Launching job $job_name"
     sbatch -J "$job_name" launch_sur_eval.sh $model $CACHE_DIR $HF_TOKEN
