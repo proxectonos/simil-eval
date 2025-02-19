@@ -8,7 +8,7 @@ Tool for evaluating LLMs using similarity measures between embeddings and surpri
 
 1. Install the evaluation environment and create the necessary auxiliary folders:
     ```sh install.sh```
-2. Edit the environment variables in the file ```./configs/.env```.
+2. Create an enviroment file in ```./configs/.env``` with keys ```HF_TOKEN``` and ```CACHE_DIR```.
 
 ## Perform Evaluations in SLURM clusters
 
