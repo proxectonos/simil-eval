@@ -15,11 +15,12 @@ Tool for evaluating LLMs using similarity measures between embeddings and surpri
 ### Similarity Evaluations
 1. Load the evaluation environment.
 2. Navigate to the ```./launchers``` folder.
-3. Update the following fields in the execution file ```execute_eval_similarity.es```:
+3. Update the following fields in the execution file ```execute_eval_similarity.sh```:
     - **MODELS**: Models to evaluate. These can be references from HuggingFace or local paths.
     - **DATASETS**: Datasets to evaluate. Currently supports "openbookqa" and "belebele."
     - **LANGUAGES**: Languages of the dataset to evaluate. Currently available: gl, cat, es, en, pt.
     - **FEWSHOT_NUM**: Number of few-shot examples. To run evaluations without few-shot, set this to 0.
+   It could be necessary to adapt the SBATCH directives to your specific cluster configuration.
 4. Run the script using ```sh execute_eval_similarity.sh```, which will launch processes in the slurm queues (one for each dataset/model/language combination).
 
 ### Surprisal Evaluations
@@ -28,6 +29,7 @@ Tool for evaluating LLMs using similarity measures between embeddings and surpri
 2. Navigate to the ```./launchers``` folder.
 3. Update the following fields in the execution file ```execute_eval_surprisal.sh```:
     - **MODELS**: Models to evaluate. These can be references from HuggingFace or local paths.
+   It could be necessary to adapt the SBATCH directives to your specific cluster configuration.
 4. Run the script using ``sh execute_eval_surprisal``, which will launch processes in the slurm queues (one for each model).
 
 ## Perform evaluations in own computer/server
