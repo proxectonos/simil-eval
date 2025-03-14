@@ -1,4 +1,4 @@
-# similaridade-eval
+# Simil-Eval
 Tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
 
 > [!NOTE]  
