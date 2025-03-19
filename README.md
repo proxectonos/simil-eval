@@ -1,4 +1,4 @@
-# Simil-Eval
+# Simil-Eval: A multilingual toolkit for evaluating LLMs using embeddings
 Tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
 
 > [!NOTE]  
