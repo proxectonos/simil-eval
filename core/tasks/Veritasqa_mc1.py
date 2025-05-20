@@ -72,5 +72,5 @@ class Veritasqa_mc1(SimilarityTask):
         repo=hf_dataset[0]
         lang_subset=hf_dataset[1]
         print(f"Dataset: {repo} - {lang_subset}")
-        self.dataset = load_dataset(repo, cache_dir = self.cache)[lang_subset]
+        self.dataset = load_dataset(repo, lang_subset, cache_dir = self.cache)["test"]
         return self.dataset
