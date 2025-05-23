@@ -1,5 +1,6 @@
 from utils.surprisal import get_surprisal, get_surprisal_last_word
 from utils.surprisal import get_scorer
+from utils.metrics import difsur_score
 import numpy as np
 
 def get_surprisal_scorer(model_name, cache_dir, tokenHF):
@@ -31,11 +32,13 @@ def surprisal_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
     good_mean = round(np.mean(good_scores),4)
     bad_mean = round(np.mean(bad_scores),4)
     difference_mean = round(bad_mean - good_mean,4)
+    difsur = round(difsur_score(good_mean, bad_mean),4)
     print(f"""Results for model: {model_name}
 Good mean: {good_mean}
 Bad mean: {bad_mean}
 Difference between means (bad-good): {difference_mean}
 {good_mean},{bad_mean},{difference_mean}
+[difsur]: {difsur}
 {"#"*40}""")
     
 def test():
