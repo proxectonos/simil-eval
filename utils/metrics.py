@@ -54,4 +54,8 @@ def bert_score(language, bert_model, generations, references, print_results=Fals
             print(f'-----------------------')
     return bertscore_results
 
-
+def difsur_score(surprisal_good, surprisal_bad):
+    if surprisal_good == 0.0 and surprisal_bad == 0.0:
+        return 0.0
+    else:
+        return 100.0*(surprisal_bad - surprisal_good) / max(surprisal_good, surprisal_bad)
