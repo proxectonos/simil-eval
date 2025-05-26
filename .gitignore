@@ -3,6 +3,7 @@ generated_files
 logs_similarity
 logs_surprisal
 texts
+datasets
 configs/.env
 core/__pycache__/*
 core/tasks/__pycache__/*

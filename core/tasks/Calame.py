@@ -22,7 +22,7 @@ class Calame(SurprisalTask):
         self.dataset = dataset_concatenated
     
     def __load_calame_gl(self):
-        calame_gl_path = "/mnt/netapp1/Proxecto_NOS/adestramentos/avaliacion/eval_corpus/calame-gl/2025-01-22_calame_rev.json"
+        calame_gl_path = "datasets/2025-01-22_calame_rev.json"
         dataset = load_dataset('json', data_files=calame_gl_path)["train"]
         dataset_concatenated = [item['target'] + ' ' + item['last_w_tgt'] for item in dataset]
         self.dataset = dataset_concatenated
