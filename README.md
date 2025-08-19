@@ -1,6 +1,8 @@
 # Simil-Eval: A multilingual toolkit for evaluating LLMs using embeddings
 Tool for evaluating LLMs using similarity measures between embeddings and surprisals in sentences.
 
+Code for the paper [Continued Pretraining and Interpretability-Based Evaluation for Low-Resource Languages: A Galician Case Study](https://aclanthology.org/2025.findings-acl.240/) (Rodríguez et al., Findings 2025)
+
 > [!NOTE]  
 > This tool is extensively tested in a cluster managed by SLURM. It can be used in other environments, but some modifications may be necessary.
 
@@ -112,3 +114,28 @@ python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET -
 | VeritasQA   | [veritasqa_gl](https://huggingface.co/datasets/projecte-aina/veritasQA/viewer/default/gl)        | [veritasqa_en](https://huggingface.co/datasets/projecte-aina/veritasQA/viewer/default/en)    | [veritasqa_ca](https://huggingface.co/datasets/projecte-aina/veritasQA/viewer/default/ca) | [veritasqa_es](https://huggingface.co/datasets/projecte-aina/veritasQA/viewer/default/es) |                                                                                        |
 | XStoryCloze | [xtorycloze_gl](https://huggingface.co/datasets/proxectonos/xstorycloze_gl)                      | [xstory_cloze_en](https://huggingface.co/datasets/juletxara/xstory_cloze/viewer/en)          | [xstorycloze_ca](https://huggingface.co/datasets/projecte-aina/xstorycloze_ca)            | [xstory_cloze_es](https://huggingface.co/datasets/juletxara/xstory_cloze/viewer/es)       | [XStoryCloze_pt](https://huggingface.co/datasets/proxectonos/XStoryCloze_pt)           |
 | TruthfulQA  | [truthfulqa_gl_gen](https://huggingface.co/datasets/proxectonos/truthfulqa_gl/viewer/generation) | [truthful_qa_gen](https://huggingface.co/datasets/truthfulqa/truthful_qa/viewer/generation/) |                                                                                           |                                                                                           |                                                                                        |
+
+### How to cite
+```
+@inproceedings{rodriguez-etal-2025-continued,
+    title = "Continued Pretraining and Interpretability-Based Evaluation for Low-Resource Languages: A {G}alician Case Study",
+    author = "Rodr{\'i}guez, Pablo  and
+      Su{\'a}rez, Silvia Paniagua  and
+      Gamallo, Pablo  and
+      Docio, Susana Sotelo",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Findings of the Association for Computational Linguistics: ACL 2025",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.findings-acl.240/",
+    doi = "10.18653/v1/2025.findings-acl.240",
+    pages = "4622--4637",
+    ISBN = "979-8-89176-256-5",
+    abstract = "Recent advances in Large Language Models (LLMs) have led to remarkable improvements in language understanding and text generation. However, challenges remain in enhancing their performance for underrepresented languages, ensuring continual learning without catastrophic forgetting, and developing robust evaluation methodologies. This work addresses these issues by investigating the impact of Continued Pretraining (CPT) on multilingual models and proposing a comprehensive evaluation framework for LLMs, focusing on the case of Galician language. Our first contribution explores CPT strategies for languages with limited representation in multilingual models. We analyze how CPT with Galician corpora improves text generation while assessing the trade-offs between linguistic enrichment and task-solving capabilities. Our findings show that CPT with small, high-quality corpora and diverse instructions enhances both task performance and linguistic quality. Our second contribution is a structured evaluation framework based on distinguishing task-based and language-based assessments, leveraging existing and newly developed benchmarks for Galician. Additionally, we contribute new Galician LLMs, datasets for evaluation and instructions, and an evaluation framework."
+}
+```
