@@ -116,7 +116,7 @@ python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET -
 | TruthfulQA  | [truthfulqa_gl_gen](https://huggingface.co/datasets/proxectonos/truthfulqa_gl/viewer/generation) | [truthful_qa_gen](https://huggingface.co/datasets/truthfulqa/truthful_qa/viewer/generation/) |                                                                                           |                                                                                           |                                                                                        |
 
 ### How to cite
-```
+```bibtex
 @inproceedings{rodriguez-etal-2025-continued,
     title = "Continued Pretraining and Interpretability-Based Evaluation for Low-Resource Languages: A {G}alician Case Study",
     author = "Rodr{\'i}guez, Pablo  and
