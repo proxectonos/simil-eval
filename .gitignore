@@ -4,6 +4,7 @@ logs_similarity
 logs_surprisal
 texts
 datasets
+eval_env
 configs/.env
 core/__pycache__/*
 core/tasks/__pycache__/*
