@@ -7,6 +7,8 @@ scikit-learn
 pandas
 minicons
 bert-score
+numpy
 pyemd
 sacrebleu
+protobuf
 
