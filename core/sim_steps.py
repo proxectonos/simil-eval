@@ -43,6 +43,7 @@ def compute_sentence_similarity(task:SimilarityTask, metric, tokenizer, model, s
    
 def compute_corpus_similarity(task:SimilarityTask, metric, generations, references):
     if metric == "bertscore":
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
         bert_model = bertmodels_yaml[task.lang]
         bertscore_results = sim_metrics.bert_score(task.lang, 
                                                    bert_model, 
@@ -51,7 +52,8 @@ def compute_corpus_similarity(task:SimilarityTask, metric, generations, referenc
                                                    print_results=False)
         final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
         logging.info(final_information)
-        print(f'-----------------------')
+        logging.info(f'-----------------------')
+        os.environ["TOKENIZERS_PARALLELISM"] = "true"
         return final_information
     else:
         raise NotImplementedError
@@ -153,10 +155,10 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
     dataset = task.load_data()
     model = AutoModel.from_pretrained(evaluated_model.model_id, 
                                       cache_dir=evaluated_model.cache, 
-                                      use_auth_token=evaluated_model.tokenHF)
+                                      token=evaluated_model.tokenHF)
     tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
                                               cache_dir=evaluated_model.cache, 
-                                              use_auth_token=evaluated_model.tokenHF)
+                                              token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
     global_metrics_information = ""
     for metric in metrics:
@@ -235,10 +237,10 @@ def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, r
     logging.info(f'Generating texts for model {evaluated_model.model_id}...')
     model = AutoModelForCausalLM.from_pretrained(evaluated_model.model_id, 
                                                  cache_dir=evaluated_model.cache, 
-                                                 use_auth_token=evaluated_model.tokenHF)
+                                                 token=evaluated_model.tokenHF)
     tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
                                               cache_dir=evaluated_model.cache, 
-                                              use_auth_token=evaluated_model.tokenHF)
+                                              token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
 
     if evaluated_model.model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
