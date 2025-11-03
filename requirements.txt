@@ -7,7 +7,7 @@ scikit-learn
 pandas
 minicons
 bert-score
-numpy
+numpy<2
 pyemd
 sacrebleu
 protobuf
