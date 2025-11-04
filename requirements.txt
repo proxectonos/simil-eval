@@ -11,4 +11,5 @@ numpy<2
 pyemd
 sacrebleu
 protobuf
+openpyxl
 
