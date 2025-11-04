@@ -33,33 +33,42 @@ def parse_metrics(text):
     metrics = {}
 
     # COSINE
-    cosine_block = re.findall(r"--COSINE RESULTS--([\s\S]*?)(--|$)", text)
-    if cosine_block:
-        block = cosine_block[0][0]
-        metrics["cosine_mean"] = float(re.search(r"Global Mean similarity score: ([0-9.]+)", block).group(1))
-        metrics["cosine_correct"] = float(re.search(r"Global Mean similarity score with correct options: ([0-9.]+)", block).group(1))
-        metrics["cosine_acc"] = float(re.search(r"Percentage of correct answers \(over 1\): ([0-9.]+)", block).group(1))
+    cosine_match = re.search(r"--COSINE RESULTS--([\s\S]*?)(?=--MOVERSCORE RESULTS--|--BERTSCORE RESULTS--|$)", text)
+    if cosine_match:
+        block = cosine_match.group(1)
+        metrics["cosine_mean"] = float(re.search(r"Global Mean similarity score:\s*([0-9.]+)", block).group(1))
+        metrics["cosine_correct"] = float(re.search(r"Global Mean similarity score with correct options:\s*([0-9.]+)", block).group(1))
+        metrics["cosine_acc"] = float(re.search(r"Percentage of correct answers \(over 1\):\s*([0-9.]+)", block).group(1))
 
     # MOVERSCORE
-    mover_block = re.findall(r"--MOVERSCORE RESULTS--([\s\S]*?)(--|$)", text)
-    if mover_block:
-        block = mover_block[0][0]
-        metrics["mover_mean"] = float(re.search(r"Global Mean similarity score: ([0-9.]+)", block).group(1))
-        metrics["mover_correct"] = float(re.search(r"Global Mean similarity score with correct options: ([0-9.]+)", block).group(1))
-        metrics["mover_acc"] = float(re.search(r"Percentage of correct answers \(over 1\): ([0-9.]+)", block).group(1))
+    mover_match = re.search(r"--MOVERSCORE RESULTS--([\s\S]*?)(?=--BERTSCORE RESULTS--|$)", text)
+    if mover_match:
+        block = mover_match.group(1)
+        metrics["mover_mean"] = float(re.search(r"Global Mean similarity score:\s*([0-9.]+)", block).group(1))
+        metrics["mover_correct"] = float(re.search(r"Global Mean similarity score with correct options:\s*([0-9.]+)", block).group(1))
+        metrics["mover_acc"] = float(re.search(r"Percentage of correct answers \(over 1\):\s*([0-9.]+)", block).group(1))
 
-    # BERTSCORE
-    bert_block = re.search(r"--BERTSCORE RESULTS--([\s\S]*?)(?:-+\n|$)", text)
-    if bert_block:
-        block = bert_block.group(1)
-        f1_correct = re.search(r"Similarity with correct options:\s*\[.*?f1:\s*([0-9.]+)", block)
-        f1_all = re.search(r"Similarity with all options:\s*\[.*?f1:\s*([0-9.]+)", block)
-        if f1_correct:
-            metrics["bert_correct_f1"] = float(f1_correct.group(1))
-        if f1_all:
-            metrics["bert_all_f1"] = float(f1_all.group(1))
+    # BERTSCORE (only F1)
+    bert_match = re.search(r"--BERTSCORE RESULTS--([\s\S]*?)[-]{5,}\n?$", text)
+    if bert_match:
+        block = bert_match.group(1)
+
+        correct_f1 = re.search(
+            r"Similarity with correct options:\s*\[.*?f1:\s*([0-9.]+)",
+            block, re.DOTALL)
+        all_f1 = re.search(
+            r"Similarity with all options:\s*\[.*?f1:\s*([0-9.]+)",
+            block, re.DOTALL)
+
+        if correct_f1:
+            metrics["bert_correct_f1"] = float(correct_f1.group(1))
+        if all_f1:
+            metrics["bert_all_f1"] = float(all_f1.group(1))
+    else:
+        print("⚠️ BERTSCORE block not found in text")
 
     return metrics
+
 
 def update_excel(lang, dataset, model, date, metrics):
     excel_path = os.path.join(OUTPUT_DIR, f"results_{lang}.xlsx")
