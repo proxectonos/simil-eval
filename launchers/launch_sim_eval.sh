@@ -7,12 +7,12 @@
 #SBATCH --cpus-per-task=32
 #SBATCH --nodes 1
 #SBATCH --mem=70G
-#SBATCH -t 2:00:00
+#SBATCH -t 1:00:00
 
 module --force purge
-module load cuda/12.8.0
-module load python/3.10.8
 module load cesga/2022
+module load python/3.10.8
+module load cuda/12.8.0
 source ../eval_env/bin/activate
 
 cd ..
