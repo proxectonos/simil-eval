@@ -1,27 +1,32 @@
 import os
 import re
 import pandas as pd
+from export.excel_tools import prettify_excel
 
-# Folder where your results are stored
+# ----------------------------------------------------------------------
+# CONFIG
+# ----------------------------------------------------------------------
 RESULTS_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/logs_similarity"
-
-# Output folder for Excel files
 OUTPUT_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/results_excel"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Regex to parse filenames
-# similarity_{date}_{model}_{dataset}_{lang}_{other}
 DATASETS = ["openbookqa", "xstorycloze", "truthfulqa", "belebele", "veritasqa"]
 LANGS = ["gl", "cat", "es", "en", "pt"]
 
+
+# ----------------------------------------------------------------------
+# HELPERS
+# ----------------------------------------------------------------------
 def parse_filename(filename):
+    """Extract date, model, dataset, and lang from filename."""
     name = filename.replace(".txt", "")
     parts = name.split("_")
-    # Find dataset and lang positions
+
     dataset_idx = next((i for i, p in enumerate(parts) if p in DATASETS), None)
     lang_idx = next((i for i, p in enumerate(parts) if p in LANGS), None)
     if dataset_idx is None or lang_idx is None:
-        return None  # skip malformed names
+        return None
+
     date = parts[1]
     model = "_".join(parts[2:dataset_idx])
     dataset = parts[dataset_idx]
@@ -30,6 +35,7 @@ def parse_filename(filename):
 
 
 def parse_metrics(text):
+    """Extract COSINE, MOVERSCORE, and BERTSCORE (only F1) metrics."""
     metrics = {}
 
     # COSINE
@@ -48,18 +54,12 @@ def parse_metrics(text):
         metrics["mover_correct"] = float(re.search(r"Global Mean similarity score with correct options:\s*([0-9.]+)", block).group(1))
         metrics["mover_acc"] = float(re.search(r"Percentage of correct answers \(over 1\):\s*([0-9.]+)", block).group(1))
 
-    # BERTSCORE (only F1)
+    # BERTSCORE (F1 only)
     bert_match = re.search(r"--BERTSCORE RESULTS--([\s\S]*?)[-]{5,}\n?$", text)
     if bert_match:
         block = bert_match.group(1)
-
-        correct_f1 = re.search(
-            r"Similarity with correct options:\s*\[.*?f1:\s*([0-9.]+)",
-            block, re.DOTALL)
-        all_f1 = re.search(
-            r"Similarity with all options:\s*\[.*?f1:\s*([0-9.]+)",
-            block, re.DOTALL)
-
+        correct_f1 = re.search(r"Similarity with correct options:\s*\[.*?f1:\s*([0-9.]+)", block, re.DOTALL)
+        all_f1 = re.search(r"Similarity with all options:\s*\[.*?f1:\s*([0-9.]+)", block, re.DOTALL)
         if correct_f1:
             metrics["bert_correct_f1"] = float(correct_f1.group(1))
         if all_f1:
@@ -71,58 +71,49 @@ def parse_metrics(text):
 
 
 def update_excel(lang, dataset, model, date, metrics):
+    """Insert or update model results in the appropriate Excel sheet."""
     excel_path = os.path.join(OUTPUT_DIR, f"results_{lang}.xlsx")
     sheet_name = dataset
 
-    # Load existing data if exists
     if os.path.exists(excel_path):
         with pd.ExcelFile(excel_path) as xls:
-            if sheet_name in xls.sheet_names:
-                df = pd.read_excel(xls, sheet_name=sheet_name)
-            else:
-                df = pd.DataFrame()
+            df = pd.read_excel(xls, sheet_name=sheet_name) if sheet_name in xls.sheet_names else pd.DataFrame()
     else:
         df = pd.DataFrame()
 
-    # Create new row
     new_row = {"Model": model, "Date": date}
     new_row.update(metrics)
 
-    # Replace row for same model/date combination or append new
+    # Remove old entry if exists
     if not df.empty:
-        # If model already exists, replace it
         df = df[df["Model"] != model]
-    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
 
-    # --- Order models consistently (alphabetically) ---
+    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
     df = df.sort_values(by="Model", key=lambda col: col.str.lower()).reset_index(drop=True)
 
-    # --- Order metric columns so "_acc" appears first per metric type ---
+    # Order metrics consistently
     metric_order = [
-        # COSINE
         "cosine_acc", "cosine_mean", "cosine_correct",
-        # MOVER
         "mover_acc", "mover_mean", "mover_correct",
-        # BERT
         "bert_correct_f1", "bert_all_f1"
     ]
-
-    # Reorder columns dynamically (preserving any new metrics added later)
     base_cols = ["Model", "Date"]
     ordered_cols = base_cols + [c for c in metric_order if c in df.columns] + [
         c for c in df.columns if c not in base_cols + metric_order
     ]
     df = df[ordered_cols]
 
-    # --- Write back to Excel ---
-    if os.path.exists(excel_path):
-        with pd.ExcelWriter(excel_path, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
-            df.to_excel(writer, index=False, sheet_name=sheet_name)
-    else:
-        with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
-            df.to_excel(writer, index=False, sheet_name=sheet_name)
+    # Write to Excel
+    mode = "a" if os.path.exists(excel_path) else "w"
+    with pd.ExcelWriter(excel_path, engine="openpyxl", mode=mode, if_sheet_exists="replace") as writer:
+        df.to_excel(writer, index=False, sheet_name=sheet_name)
+
+    # Pretty formatting
+    prettify_excel(excel_path)
+
 
 def process_all():
+    """Iterate over result files and build per-language Excels."""
     for fname in os.listdir(RESULTS_DIR):
         if not fname.startswith("similarity_") or not fname.endswith("_out.log"):
             continue
@@ -130,15 +121,15 @@ def process_all():
         parsed = parse_filename(fname)
         if not parsed:
             continue
-        date, model, dataset, lang = parsed
 
+        date, model, dataset, lang = parsed
         with open(os.path.join(RESULTS_DIR, fname), "r", encoding="utf-8") as f:
             text = f.read()
 
         metrics = parse_metrics(text)
         update_excel(lang, dataset, model, date, metrics)
 
-    print("✅ All results processed and Excel files updated.")
+    print("✅ All similarity results processed and styled.")
 
 
 if __name__ == "__main__":
