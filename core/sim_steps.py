@@ -75,7 +75,11 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
     correct_answers = 0
     for i, answer in enumerate(csv_reader):
         if i in fewshots_examples_ids: offset_fewshot += 1
-        example = dataset[i+offset_fewshot] # Get the i-th example of the dataset with the correction of fewshot examples
+        index = i + offset_fewshot
+        if index >= len(dataset):
+            print(f"Index {index} out of range for dataset of length {len(dataset)}. Skipping...")
+            continue
+        example = dataset[index]
         generated_answer = get_generated_answer(task, answer)
         answer_similarities = []
         correct_option = task.get_correct_option(example)
@@ -126,7 +130,11 @@ def evaluate_corpus_similarity(task:SimilarityTask, metric, dataset, csv_reader,
     original_options = []
     for i, answer in enumerate(csv_reader):
         if i in fewshots_examples_ids: offset_fewshot += 1
-        example = dataset[i+offset_fewshot] # Get the i-th example of the dataset with the correction of fewshot examples
+        index = i + offset_fewshot
+        if index >= len(dataset):
+            print(f"Index {index} out of range for dataset of length {len(dataset)}. Skipping...")
+            continue
+        example = dataset[index]
         generated_answer.append(get_generated_answer(task, answer))
         correct_options.append(task.get_correct_option(example))
         original_options.append(task.get_options(example))

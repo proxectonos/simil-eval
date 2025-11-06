@@ -36,9 +36,7 @@ def surprisal_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
     print(f"""Results for model: {model_name}
 Good mean: {good_mean}
 Bad mean: {bad_mean}
-Difference between means (bad-good): {difference_mean}
-{good_mean},{bad_mean},{difference_mean}
-[difsur]: {difsur}
+difsur: {difsur}
 {"#"*40}""")
     
 def test():
