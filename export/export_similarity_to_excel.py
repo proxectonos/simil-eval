@@ -1,6 +1,8 @@
 import os
 import re
+
 import pandas as pd
+import summarize_results
 from excel_tools import prettify_excel
 from tqdm.auto import tqdm
 
@@ -194,6 +196,7 @@ def process_all():
 
     print("✅ All similarity results processed and styled.")
 
+    summarize_results.summarize_results_from_path(OUTPUT_DIR)
 
 if __name__ == "__main__":
     process_all()
