@@ -56,9 +56,13 @@ def extract_summary(df, metrics=['cosine_acc', 'mover_acc']):
 
     accs = [df[sheet][metrics] for sheet in df.keys()]
 
+    column_order = ['belebele','openbookqa','veritasqa','truthfulqa','xstorycloze']
+
     concat_df = pd.concat(accs, keys=df.keys(),axis=1).dropna(how='all')
 
-    styled_df = concat_df.style.highlight_max(axis=0,color='green').format(precision=3)
+    concat_df = concat_df.reindex(columns=column_order, level=0)
+
+    styled_df = concat_df.style.highlight_max(axis=0,color='lightgreen').format(precision=3)
 
     return styled_df
 
