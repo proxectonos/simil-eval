@@ -13,7 +13,7 @@ def get_surprisal(model_scorer, sentence):
     return model_scorer.sequence_score(sentence, reduction = lambda x: -x.sum(0).item())
 
 def normalize_token(tok: str) -> str:
-    return tok.replace("▁", "")
+    return tok.replace("▁", "").replace("Ġ", "")
 
 def get_surprisal_last_word(model_scorer, string):
     words = string.split()
@@ -30,4 +30,4 @@ def get_surprisal_last_word(model_scorer, string):
         #word, score = surprisals[-i]; print(f"    {word} {score}")
         if last_word == last_surprisal_word:
             return max([score for _, score in surprisals[-i:]])
-     return None
+    return None
