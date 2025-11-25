@@ -18,7 +18,13 @@ LANGS = ["gl", "cat", "es", "en", "pt"]
 # HELPERS
 # ----------------------------------------------------------------------
 def parse_filename(filename):
-    """Extract date, model, dataset, and lang from filename."""
+    """
+    Parse a filename in the format "date_model_dataset_lang.txt"
+    into its constituent parts.
+
+    Returns a tuple of (date, model, dataset, lang) if the filename is valid,
+    or None otherwise.
+    """
     name = filename.replace(".txt", "")
     parts = name.split("_")
 
@@ -35,7 +41,20 @@ def parse_filename(filename):
 
 
 def parse_metrics(text):
-    """Extract COSINE, MOVERSCORE, and BERTSCORE (only F1) metrics."""
+    #"""Extract COSINE, MOVERSCORE, and BERTSCORE (only F1) metrics."""
+    """
+    Parse a text containing the results of a similarity evaluation and extract
+    the following metrics:
+
+    - COSINE: Mean similarity score, mean similarity score with correct options,
+      and percentage of correct answers (over 1)
+    - MOVERSCORE: Mean similarity score, mean similarity score with correct options,
+      and percentage of correct answers (over 1)
+    - BERTSCORE: F1 score for similarity with correct options, and F1 score for
+      similarity with all options
+
+    Returns a dictionary with the extracted metrics.
+    """
     metrics = {}
 
     # COSINE
@@ -71,7 +90,32 @@ def parse_metrics(text):
 
 
 def update_excel(lang, dataset, model, date, metrics):
-    """Insert or update model results in the appropriate Excel sheet."""
+    #"""Insert or update model results in the appropriate Excel sheet."""
+    """
+    Insert or update model results in the appropriate Excel sheet.
+
+    Parameters
+    ----------
+    lang : str
+        Language code (e.g. "en", "es", "gl")
+    dataset : str
+        Dataset name (e.g. "openbookqa", "xstorycloze", "truthfulqa")
+    model : str
+        Model name (e.g. "distilbert-base-uncased")
+    date : str
+        Date of the evaluation in the format "YYYY-MM-DD"
+    metrics : dict
+        Dictionary with evaluation metrics (COSINE, MOVERSCORE, BERTSCORE)
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Results are sorted by model name in ascending order.
+    Existing results are overwritten if the model name is the same.
+    """
     excel_path = os.path.join(OUTPUT_DIR, f"results_{lang}.xlsx")
     sheet_name = dataset
 
@@ -113,7 +157,19 @@ def update_excel(lang, dataset, model, date, metrics):
 
 
 def process_all():
-    """Iterate over result files and build per-language Excels."""
+    #"""Iterate over result files and build per-language Excels."""
+    """
+    Iterate over result files and build per-language Excels.
+
+    This function processes all files in the RESULTS_DIR directory
+    whose names start with "similarity_" and end with "_out.log".
+    It parses the filename to extract the date, model name, dataset name,
+    and language code. It then reads the file, extracts the evaluation metrics
+    using parse_metrics, and updates the Excel sheet for the language using
+    update_excel.
+
+    After all files have been processed, it prints a success message.
+    """
     for fname in os.listdir(RESULTS_DIR):
         if not fname.startswith("similarity_") or not fname.endswith("_out.log"):
             continue
