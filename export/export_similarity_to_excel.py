@@ -1,7 +1,10 @@
 import os
 import re
+
 import pandas as pd
-from export.excel_tools import prettify_excel
+import summarize_results
+from excel_tools import prettify_excel
+from tqdm.auto import tqdm
 
 # ----------------------------------------------------------------------
 # CONFIG
@@ -149,8 +152,14 @@ def update_excel(lang, dataset, model, date, metrics):
 
     # Write to Excel
     mode = "a" if os.path.exists(excel_path) else "w"
-    with pd.ExcelWriter(excel_path, engine="openpyxl", mode=mode, if_sheet_exists="replace") as writer:
-        df.to_excel(writer, index=False, sheet_name=sheet_name)
+    # FIXME: if_sheet_exists is only valid in append mode (crash if mode=="w"). Until further info, temporary fixing with an if-else case.
+    # I'm guessing this should be easily fixed by setting mode to "a" always, but I don't want to change the logic too much without knowing the full context.
+    if mode == "w":
+        with pd.ExcelWriter(excel_path, engine="openpyxl", mode=mode) as writer:
+            df.to_excel(writer, index=False, sheet_name=sheet_name)
+    else:
+        with pd.ExcelWriter(excel_path, engine="openpyxl", mode=mode, if_sheet_exists="replace") as writer:
+            df.to_excel(writer, index=False, sheet_name=sheet_name)
 
     # Pretty formatting
     prettify_excel(excel_path)
@@ -170,7 +179,7 @@ def process_all():
 
     After all files have been processed, it prints a success message.
     """
-    for fname in os.listdir(RESULTS_DIR):
+    for fname in tqdm(os.listdir(RESULTS_DIR), desc="Processing similarity results"):
         if not fname.startswith("similarity_") or not fname.endswith("_out.log"):
             continue
 
@@ -187,6 +196,7 @@ def process_all():
 
     print("✅ All similarity results processed and styled.")
 
+    summarize_results.summarize_results_from_path(OUTPUT_DIR)
 
 if __name__ == "__main__":
     process_all()
