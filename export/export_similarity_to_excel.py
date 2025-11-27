@@ -196,7 +196,7 @@ def process_all():
 
     print("✅ All similarity results processed and styled.")
 
-    summarize_results.summarize_results_from_path(OUTPUT_DIR)
+    summarize_results.summarize_similarity_from_path(OUTPUT_DIR)
 
 if __name__ == "__main__":
     process_all()
