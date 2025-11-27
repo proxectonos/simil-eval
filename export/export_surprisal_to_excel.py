@@ -1,8 +1,10 @@
 import os
 import re
-import pandas as pd
 import sys
-from export.excel_tools import collect_results_from_folder, save_grouped_by_lang, prettify_excel
+
+import pandas as pd
+import summarize_results
+from excel_tools import collect_results_from_folder, prettify_excel, save_grouped_by_lang
 
 # ----------------------------------------------------------------------
 # CONFIG
@@ -36,6 +38,7 @@ def parse_surprisal_results(text):
 
     for lang, content in blocks:
         lang = lang.strip().lower()
+
         dif_match = re.search(r"difsur:\s*([0-9.]+)", content)
         mean_match = re.search(r"Mean score last word:\s*([0-9.]+)", content)
 
@@ -69,3 +72,5 @@ if __name__ == "__main__":
         excel_path = save_grouped_by_lang(df, OUTPUT_DIR, filename_prefix="results_surprisal")
         prettify_excel(excel_path)
         print(f"✅ Surprisal results exported and styled → {excel_path}")
+
+        summarize_results.summarize_surprisal_from_path(OUTPUT_DIR)
