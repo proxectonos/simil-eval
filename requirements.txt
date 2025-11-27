@@ -12,4 +12,5 @@ pyemd
 sacrebleu
 protobuf
 openpyxl
+xlsxwriter
 
