@@ -48,48 +48,25 @@ def extract_summary(df, metrics=["cosine_acc", "mover_acc"]):
     Finally, it highlights the maximum values in the DataFrame using the green color, and formats the values to precision 3.
 
     """
-    def filter_model_names(model_names):
-        """
-        Filter model names by removing the date from the model name.
-
-        Parameters
-        ----------
-        model_names : list of str
-            List of model names.
-
-        Returns
-        -------
-        filtered_names : list of str
-            List of filtered model names.
-
-        Notes
-        -----
-        The function uses the regular expression '_\d{2}-\d{2}-\d{2}_\d{2}-\d{2}' to filter out the date from the model name.
-        """
-        pattern = re.compile(r'_\d{2}-\d{2}-\d{2}_\d{2}-\d{2}')
-        filtered_names = [re.sub(pattern, "", name) for name in model_names]
-        return filtered_names
 
     for sheet in df.keys():
-        df_model_names = df[sheet]['Model']
+        df_model_names = df[sheet]["Model"]
         cleaned_df_model_names = filter_model_names(df_model_names)
-        df[sheet]['Model'] = cleaned_df_model_names
-        df[sheet].set_index(['Model','Date'], inplace=True)
+        df[sheet]["Model"] = cleaned_df_model_names
+        df[sheet].set_index(["Model", "Date"], inplace=True)
 
     accs = [df[sheet][metrics] for sheet in df.keys()]
 
-    column_order = ['belebele','openbookqa','veritasqa','truthfulqa','xstorycloze']
+    column_order = ["belebele", "openbookqa", "veritasqa", "truthfulqa", "xstorycloze"]
 
-    concat_df = pd.concat(accs, keys=df.keys(),axis=1).dropna(how='all')
-
+    concat_df = pd.concat(accs, keys=df.keys(), axis=1).dropna(how="all")
     concat_df = concat_df.reindex(columns=column_order, level=0)
-
-    styled_df = concat_df.style.highlight_max(axis=0,color='lightgreen').format(precision=3)
+    styled_df = concat_df.style.highlight_max(axis=0, color="lightgreen").format(precision=3)
 
     return styled_df
 
-def export_lang_dict_to_excel(lang_df_dict, out_path, max_col_width=50):
 
+def export_lang_dict_to_excel(lang_df_dict, out_path, max_col_width=50):
     """
     Export a dictionary of DataFrames to an Excel file, with one sheet per language.
     The order of the sheets is 'gl' first, followed by the rest in alphabetical order.
@@ -104,36 +81,23 @@ def export_lang_dict_to_excel(lang_df_dict, out_path, max_col_width=50):
     """
     processed = lang_df_dict.copy()
     ordered = []
-    if 'gl' in processed:
-        ordered.append('gl')
-    ordered += [language for language in sorted(processed.keys()) if language != 'gl']
+    if "gl" in processed:
+        ordered.append("gl")
+    ordered += [language for language in sorted(processed.keys()) if language != "gl"]
 
-    with pd.ExcelWriter(out_path, engine='xlsxwriter') as writer:
-
+    with pd.ExcelWriter(out_path, engine="xlsxwriter") as writer:
         workbook = writer.book
-        num_format = workbook.add_format({'num_format': '0.000'})
+        num_format = workbook.add_format({"num_format": "0.000"})
 
         for lang in ordered:
             obj = processed[lang]
 
             if hasattr(obj, "to_excel"):
-                obj.to_excel(
-                    writer,
-                    sheet_name=lang,
-                    index=True,
-                    float_format="%.3f",
-                    freeze_panes=(1,2)
-                )
+                obj.to_excel(writer, sheet_name=lang, index=True, float_format="%.3f", freeze_panes=(1, 2))
                 df = obj.data
             else:
                 df = obj
-                df.to_excel(
-                    writer,
-                    sheet_name=lang,
-                    index=True,
-                    float_format="%.3f",
-                    freeze_panes=(1,2)
-                )
+                df.to_excel(writer, sheet_name=lang, index=True, float_format="%.3f", freeze_panes=(1, 2))
 
             worksheet = writer.sheets[lang]
 
@@ -143,9 +107,7 @@ def export_lang_dict_to_excel(lang_df_dict, out_path, max_col_width=50):
 
             # MultiIndex columns:
             if isinstance(df.columns, pd.MultiIndex):
-
                 for i, (superscript, metric) in enumerate(df.columns):
-
                     base_len = max(len(str(superscript)), len(str(metric))) + 2
                     final_width = min(base_len, max_col_width)
 
@@ -166,6 +128,7 @@ def export_lang_dict_to_excel(lang_df_dict, out_path, max_col_width=50):
 
     print(f"Wrote {out_path} with sheets ordered: {ordered}")
 
+
 def summarize_results_from_path(output_dir, max_col_width=50):
     """
     Summarize results from a directory, saving a combined Excel file.
@@ -180,7 +143,7 @@ def summarize_results_from_path(output_dir, max_col_width=50):
     langs = []
     summed_dfs = []
     for f in os.listdir(output_dir):
-        if not (f.startswith('results_') and f.endswith('.xlsx')):
+        if not (f.startswith("results_") and f.endswith(".xlsx")):
             continue
         lang = f[8:-5]
         df = pd.read_excel(f"{output_dir}/{f}", sheet_name=None)
