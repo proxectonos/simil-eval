@@ -96,9 +96,11 @@ python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset $DATASET -
 1. Load the evaluation environment.
 2. Execute the following commands, changing the `RESULTS_DIR` and `OUTPUT_DIR` variables in each file:
 ```
-python3 -m export.export_similarity_to_excel
-python3 -m export.export_surprisal_to_excel
+cd export/
+python export_similarity_to_excel.py
+python export_surprisal_to_excel.py
 ```
+3. Results can be consulted in `$OUTPUT_DIR/similarity_summary.xlsx` and `$OUTPUT_DIR/surprisal_summary.xlsx' files.
 
 ### Metrics by Dataset
 
