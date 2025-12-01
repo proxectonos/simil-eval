@@ -7,6 +7,10 @@ scikit-learn
 pandas
 minicons
 bert-score
+numpy<2
 pyemd
 sacrebleu
+protobuf
+openpyxl
+xlsxwriter
 

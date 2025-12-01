@@ -12,20 +12,22 @@ def get_scorer(model_name, cache_dir, tokenHF):
 def get_surprisal(model_scorer, sentence):
     return model_scorer.sequence_score(sentence, reduction = lambda x: -x.sum(0).item())
 
+def normalize_token(tok: str) -> str:
+    return tok.replace("▁", "").replace("Ġ", "")
+
 def get_surprisal_last_word(model_scorer, string):
     words = string.split()
     last_word = words[-1]
     surprisals = model_scorer.token_score(string, surprisal=True)[0]
-    last_surprisal_word = surprisals[-1][0]
+    last_surprisal_word = normalize_token(surprisals[-1][0])
 
     # Check if the last word is the same as the last surprisal word
     if last_word == last_surprisal_word:
         return surprisals[-1][1]
     # If not, concatenate previous elements until they match
     for i in range(2, len(words) + 1):
-        last_surprisal_word = ''.join(word for word, _ in surprisals[-i:])
+        last_surprisal_word = ''.join(normalize_token(word) for word, _ in surprisals[-i:])
         #word, score = surprisals[-i]; print(f"    {word} {score}")
         if last_word == last_surprisal_word:
             return max([score for _, score in surprisals[-i:]])
-    print(f"Last word not found in the surprisal list: {last_word}")
     return None

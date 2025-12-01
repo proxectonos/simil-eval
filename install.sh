@@ -10,6 +10,7 @@ mkdir logs_similarity
 mkdir logs_surprisal
 mkdir texts
 mkdir datasets
+mkdir export
 
 # Download datasets outside HuggingFace
 wget https://raw.githubusercontent.com/proxectonos/calame-gl/main/2025-01-22_calame_rev.json -P datasets

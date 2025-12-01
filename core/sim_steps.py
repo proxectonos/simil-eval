@@ -9,6 +9,7 @@ import re
 import os
 import logging
 import yaml
+from datetime import datetime
 
 # Config settings file  ----------------
 yaml_bertmodels_path = f'./configs/bert_models.yaml'
@@ -42,6 +43,7 @@ def compute_sentence_similarity(task:SimilarityTask, metric, tokenizer, model, s
    
 def compute_corpus_similarity(task:SimilarityTask, metric, generations, references):
     if metric == "bertscore":
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
         bert_model = bertmodels_yaml[task.lang]
         bertscore_results = sim_metrics.bert_score(task.lang, 
                                                    bert_model, 
@@ -50,7 +52,8 @@ def compute_corpus_similarity(task:SimilarityTask, metric, generations, referenc
                                                    print_results=False)
         final_information = f'[precision: {np.mean(bertscore_results["precision"]).round(4)}, recall: {np.mean(bertscore_results["recall"]).round(4)}, f1: {np.mean(bertscore_results["f1"]).round(4)}, hashcode: {bertscore_results["hashcode"]}]'
         logging.info(final_information)
-        print(f'-----------------------')
+        logging.info(f'-----------------------')
+        os.environ["TOKENIZERS_PARALLELISM"] = "true"
         return final_information
     else:
         raise NotImplementedError
@@ -72,7 +75,11 @@ def evaluate_sentence_similarity(task:SimilarityTask, model, tokenizer, metric,d
     correct_answers = 0
     for i, answer in enumerate(csv_reader):
         if i in fewshots_examples_ids: offset_fewshot += 1
-        example = dataset[i+offset_fewshot] # Get the i-th example of the dataset with the correction of fewshot examples
+        index = i + offset_fewshot
+        if index >= len(dataset):
+            print(f"Index {index} out of range for dataset of length {len(dataset)}. Skipping...")
+            continue
+        example = dataset[index]
         generated_answer = get_generated_answer(task, answer)
         answer_similarities = []
         correct_option = task.get_correct_option(example)
@@ -123,7 +130,11 @@ def evaluate_corpus_similarity(task:SimilarityTask, metric, dataset, csv_reader,
     original_options = []
     for i, answer in enumerate(csv_reader):
         if i in fewshots_examples_ids: offset_fewshot += 1
-        example = dataset[i+offset_fewshot] # Get the i-th example of the dataset with the correction of fewshot examples
+        index = i + offset_fewshot
+        if index >= len(dataset):
+            print(f"Index {index} out of range for dataset of length {len(dataset)}. Skipping...")
+            continue
+        example = dataset[index]
         generated_answer.append(get_generated_answer(task, answer))
         correct_options.append(task.get_correct_option(example))
         original_options.append(task.get_options(example))
@@ -152,10 +163,10 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
     dataset = task.load_data()
     model = AutoModel.from_pretrained(evaluated_model.model_id, 
                                       cache_dir=evaluated_model.cache, 
-                                      use_auth_token=evaluated_model.tokenHF)
+                                      token=evaluated_model.tokenHF)
     tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
                                               cache_dir=evaluated_model.cache, 
-                                              use_auth_token=evaluated_model.tokenHF)
+                                              token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
     global_metrics_information = ""
     for metric in metrics:
@@ -188,7 +199,7 @@ def evaluate_similarity(task:SimilarityTask, evaluated_model:EvaluatingModel, me
             
 
 #- Xeración de respostas ----------------------------------------------
-def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids):
+def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids, prompt):
     max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
@@ -197,7 +208,7 @@ def generate_answers_no_pad(model, task:SimilarityTask, tokenizer, prompt_ids):
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True) 
 
-def generate_answers(model, task:SimilarityTask, tokenizer, prompt_ids):
+def generate_answers(model, task:SimilarityTask, tokenizer, prompt_ids, prompt):
     max_new_tokens = 20 if task.name != "summarization" else 60
     final_outputs = model.generate(**prompt_ids, 
         do_sample=True,
@@ -207,20 +218,43 @@ def generate_answers(model, task:SimilarityTask, tokenizer, prompt_ids):
         temperature=0.5)
     return tokenizer.decode(final_outputs[0], skip_special_tokens=True)  
 
+def generate_answer_with_template(model, task:SimilarityTask, tokenizer, prompt_ids, prompt):
+
+    max_new_tokens = 20 if task.name != "summarization" else 60
+    message = [ { "role": "user", "content": prompt } ]
+    date_string = datetime.today().strftime('%Y-%m-%d')
+    prompt = tokenizer.apply_chat_template(
+        message,
+        tokenize=False,
+        add_generation_prompt=True,
+        date_string=date_string
+    )
+    inputs = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
+    input_length = inputs.shape[1]
+    final_outputs = model.generate(inputs.to(model.device), 
+        do_sample=True,
+        max_new_tokens=max_new_tokens,
+        pad_token_id=model.config.eos_token_id,
+        repetition_penalty=0.5 if task.name != "None" else 1.2, 
+        temperature=0.5)
+    return fr'{task.splitPrompt}.*: '+tokenizer.decode(final_outputs[0, input_length:], skip_special_tokens=True)
+
 def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, results_file_name, examples_file):      
     answers = []
     fewshots_examples_ids = []
     logging.info(f'Generating texts for model {evaluated_model.model_id}...')
     model = AutoModelForCausalLM.from_pretrained(evaluated_model.model_id, 
                                                  cache_dir=evaluated_model.cache, 
-                                                 use_auth_token=evaluated_model.tokenHF)
+                                                 token=evaluated_model.tokenHF)
     tokenizer = AutoTokenizer.from_pretrained(evaluated_model.model_id, 
                                               cache_dir=evaluated_model.cache, 
-                                              use_auth_token=evaluated_model.tokenHF)
+                                              token=evaluated_model.tokenHF)
     model.to(evaluated_model.device)
 
     if evaluated_model.model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
         generation_function = generate_answers_no_pad
+    elif tokenizer.chat_template:
+            generation_function = generate_answer_with_template
     else:
         generation_function = generate_answers
 
@@ -247,7 +281,8 @@ def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, r
                 generated_sequence = generation_function(model, 
                                                          task, 
                                                          tokenizer, 
-                                                         prompt_ids)
+                                                         prompt_ids,
+                                                         prompt)
                 answers.append(generated_sequence)
                 parts = generated_sequence.rsplit(fr'{task.splitPrompt}.*:', 1)
                 answer = parts[-1].strip()

@@ -11,8 +11,10 @@
 #SBATCH -t 45:00
 
 module --force purge
-module load python/3.9.9
-source ../../eval_env/bin/activate
+module load cesga/2022
+module load python/3.10.8
+module load cuda/12.8.0
+source ../eval_env/bin/activate
 
 cd ..
 

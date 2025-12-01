@@ -5,7 +5,6 @@ logs_surprisal
 texts
 datasets
 eval_env
+results_excel
 configs/.env
-core/__pycache__/*
-core/tasks/__pycache__/*
-utils/__pycache__/*
+__pycache__/
