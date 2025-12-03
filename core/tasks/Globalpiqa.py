@@ -18,7 +18,8 @@ class Globalpiqa(SurprisalTask):
     def load_evaluation_dataset(self):
         language_code = self.language_subsets.get(self.lang)
         dataset = load_dataset('mrlbenchmarks/global-piqa-nonparallel', language_code)['test']
-        dataset_good = dataset_bad = []
+        dataset_good = []
+        dataset_bad = []
         for item in dataset:
             if item['label'] == 0:
                 dataset_good.append(item['solution0'])
