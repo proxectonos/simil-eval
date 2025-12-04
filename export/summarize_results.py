@@ -245,7 +245,7 @@ def summarize_surprisal_from_path(input_dir):
 
     sheets = [dfc[sheet] for sheet in dfc.keys()]
     sheets_cola = [sh[sh["benchmark"] == "cola"].drop(labels=["benchmark", "mean_last_word", "lang"], axis=1) for sh in sheets]
-    sheets_globalpiqa = [sh[sh["benchmark"] == "globalpiqa"].drop(labels=["benchmark", "difsur", "lang"], axis=1) for sh in sheets]
+    sheets_globalpiqa = [sh[sh["benchmark"] == "globalpiqa"].drop(labels=["benchmark", "mean_last_word", "lang"], axis=1) for sh in sheets]
     sheets_calame = [sh[sh["benchmark"] == "calame"].drop(labels=["benchmark", "difsur", "lang"], axis=1) for sh in sheets]
     
     export_cola = (
