@@ -20,7 +20,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 def parse_surprisal_results(text):
     """
     Parse surprisal benchmark results from a multi-language file.
-    - If 'difsur' present → Cola benchmark.
+    - If 'difsur-cola' present → Cola benchmark.
+    - if 'difsur-globalpiqa present → Global Piqa benchmark.
     - If 'Mean score last word' present → Calame benchmark.
     Keeps only difsur and mean_last_word (removes good/bad mean).
     """
@@ -39,13 +40,20 @@ def parse_surprisal_results(text):
     for lang, content in blocks:
         lang = lang.strip().lower()
 
-        dif_match = re.search(r"difsur:\s*([0-9.]+)", content)
+        dif_cola_match = re.search(r"difsur-cola:\s*([0-9.]+)", content)
+        dif_globalpiqa_match = re.search(r"difsur-globalpiqa:\s*([0-9.]+)", content)
+        dif_match = dif_cola_match or dif_globalpiqa_match
         mean_match = re.search(r"Mean score last word:\s*([0-9.]+)", content)
 
-        if dif_match:
+        if dif_cola_match:
             benchmark = "cola"
+            score = float(dif_cola_match.group(1))
+        elif dif_globalpiqa_match:
+            benchmark = "globalpiqa"
+            score = float(dif_globalpiqa_match.group(1))
         elif mean_match:
             benchmark = "calame"
+            score = float(mean_match.group(1))
         else:
             benchmark = "unknown"
 
@@ -53,8 +61,8 @@ def parse_surprisal_results(text):
             "model": model,
             "benchmark": benchmark,
             "lang": lang,
-            "difsur": float(dif_match.group(1)) if dif_match else None,
-            "mean_last_word": float(mean_match.group(1)) if mean_match else None,
+            "difsur": score if dif_match else None,
+            "mean_last_word": score if mean_match else None,
         })
 
     return results

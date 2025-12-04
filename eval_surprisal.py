@@ -26,11 +26,11 @@ if __name__ == "__main__":
     elif args.dataset == "cola":
         cola_task = Cola.Cola(args.lang, args.cache)
         cola_task.load_evaluation_dataset()
-        surprisal_score_difsur(model_scorer, args.model, cola_task.dataset_good, cola_task.dataset_bad)
+        surprisal_score_difsur(model_scorer, args.model, cola_task.dataset_good, cola_task.dataset_bad, args.dataset)
     elif args.dataset == "globalpiqa":
         globalpiqa_task = Globalpiqa.Globalpiqa(args.lang, args.cache)
         globalpiqa_task.load_evaluation_dataset()
-        surprisal_score_difsur(model_scorer, args.model, globalpiqa_task.dataset_good, globalpiqa_task.dataset_bad)
+        surprisal_score_difsur(model_scorer, args.model, globalpiqa_task.dataset_good, globalpiqa_task.dataset_bad, args.dataset)
     else:
         print("Dataset not suported...")
         exit()
