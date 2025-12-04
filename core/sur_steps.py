@@ -8,6 +8,7 @@ def get_surprisal_scorer(model_name, cache_dir, tokenHF):
     return model_scorer
 
 def surprisal_score_calame(model_scorer, model_name, dataset):
+    """Compute surprisal scores for the last word in a sentence for Calame dataset"""
     scores = []
     for examples in dataset:
         score = get_surprisal_last_word(model_scorer, examples)
@@ -18,7 +19,8 @@ def surprisal_score_calame(model_scorer, model_name, dataset):
 Mean score last word: {scores_mean}
 {"#"*40}""")
 
-def surprisal_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
+def surprisal_score_difsur(model_scorer, model_name, dataset_good, dataset_bad, dataset_name):
+    """Compute difsur scores using good and bad partitions of a dataset"""
     good_scores = []
     bad_scores = []
     for good in dataset_good:
@@ -36,9 +38,6 @@ def surprisal_score_cola(model_scorer, model_name, dataset_good, dataset_bad):
     print(f"""Results for model: {model_name}
 Good mean: {good_mean}
 Bad mean: {bad_mean}
-difsur: {difsur}
+difsur-{dataset_name}: {difsur}
 {"#"*40}""")
-    
-def test():
-    print("Test function")
-    return
+

@@ -245,10 +245,19 @@ def summarize_surprisal_from_path(input_dir):
 
     sheets = [dfc[sheet] for sheet in dfc.keys()]
     sheets_cola = [sh[sh["benchmark"] == "cola"].drop(labels=["benchmark", "mean_last_word", "lang"], axis=1) for sh in sheets]
+    sheets_globalpiqa = [sh[sh["benchmark"] == "globalpiqa"].drop(labels=["benchmark", "mean_last_word", "lang"], axis=1) for sh in sheets]
     sheets_calame = [sh[sh["benchmark"] == "calame"].drop(labels=["benchmark", "difsur", "lang"], axis=1) for sh in sheets]
-
+    
     export_cola = (
         pd.concat(sheets_cola, axis=1, keys=dfc.keys())
+        .dropna(how="all", axis=1)
+        .swaplevel(axis=1)
+        .style.highlight_max(axis=0, color="green")
+        .format(precision=3)
+    )
+
+    export_globalpiqa = (
+        pd.concat(sheets_globalpiqa, axis=1, keys=dfc.keys())
         .dropna(how="all", axis=1)
         .swaplevel(axis=1)
         .style.highlight_max(axis=0, color="green")
@@ -263,8 +272,8 @@ def summarize_surprisal_from_path(input_dir):
         .format(precision=3)
     )
 
-    dfs_surprisal = [export_cola, export_calame]
-    dfs_surprisal_names = ["cola", "calame"]
+    dfs_surprisal = [export_cola, export_calame, export_globalpiqa]
+    dfs_surprisal_names = ["cola", "calame", "globalpiqa"]
     out_path=os.path.join(input_dir, "surprisal_summary.xlsx")
 
     try:

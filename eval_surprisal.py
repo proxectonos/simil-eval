@@ -1,5 +1,5 @@
-from core.tasks import Cola, Calame
-from core.sur_steps import surprisal_score_cola, surprisal_score_calame
+from core.tasks import Cola, Calame, Globalpiqa
+from core.sur_steps import surprisal_score_difsur, surprisal_score_calame
 from core.sur_steps import get_surprisal_scorer
 import logging
 import argparse
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument('--cache', type=str, help='Directory where cache data will be stored')
     parser.add_argument('--test', action='store_true', help='Test functionalities')
     parser.add_argument('--lang', type=str, help='Language of the dataset')
-    parser.add_argument('--dataset', type=str, help='Dataset to evaluate (CoLA or Calame)')
+    parser.add_argument('--dataset', type=str, help='Dataset to evaluate [ cola | calame | globalpiqa]')
     parser.add_argument('--token', type=str, help='Hugging Face authentication token')
     args = parser.parse_args()
 
@@ -26,7 +26,11 @@ if __name__ == "__main__":
     elif args.dataset == "cola":
         cola_task = Cola.Cola(args.lang, args.cache)
         cola_task.load_evaluation_dataset()
-        surprisal_score_cola(model_scorer, args.model, cola_task.dataset_good, cola_task.dataset_bad)
+        surprisal_score_difsur(model_scorer, args.model, cola_task.dataset_good, cola_task.dataset_bad, args.dataset)
+    elif args.dataset == "globalpiqa":
+        globalpiqa_task = Globalpiqa.Globalpiqa(args.lang, args.cache)
+        globalpiqa_task.load_evaluation_dataset()
+        surprisal_score_difsur(model_scorer, args.model, globalpiqa_task.dataset_good, globalpiqa_task.dataset_bad, args.dataset)
     else:
         print("Dataset not suported...")
         exit()
