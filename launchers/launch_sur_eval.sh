@@ -23,23 +23,35 @@ CACHE_DIR=$2
 TOKEN_HF=$3
 
 #------------------------------------------------------------
-# echo "Launching surprisal Cola-test for Galician------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang gl --token $HF_TOKEN
+echo "Launching surprisal Cola-test for Galician------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang gl --token $HF_TOKEN
 
-# echo "Launching surprisal Calame-test for Galician------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset calame --lang gl --token $HF_TOKEN
+echo "Launching surprisal Calame-test for Galician------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset calame --lang gl --token $HF_TOKEN
 
-echo "Launching surprisal GlobalPIQA-test for Galician"
+echo "Launching surprisal GlobalPIQA-test for Galician------------------"
 python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset globalpiqa --lang gl --token $HF_TOKEN
 
-# echo "Launching surprisal test for English------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang en --token $HF_TOKEN
+echo "Launching surprisal Cola-test for English------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang en --token $HF_TOKEN
 
-# echo "Launching surprisal test for Catalan------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang cat --token $HF_TOKEN
+echo "Launching surprisal GlobalPIQA-test for English------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset globalpiqa --lang en --token $HF_TOKEN
 
-# echo "Launching surprisal test for Spanish------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang es --token $HF_TOKEN
+echo "Launching surprisal Cola-test for Catalan------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang cat --token $HF_TOKEN
 
-# echo "Launching surprisal test for Portuguese------------------"
-# python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset calame --lang pt --token $HF_TOKEN
+echo "Launching surprisal GlobalPIQA-test for Catalan------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset globalpiqa --lang cat --token $HF_TOKEN
+
+echo "Launching surprisal Cola-test for Spanish------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset cola --lang es --token $HF_TOKEN
+
+echo "Launching surprisal GlobalPIQA-test for Spanish------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset globalpiqa --lang es --token $HF_TOKEN
+
+echo "Launching surprisal Calame-test for Portuguese------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset calame --lang pt --token $HF_TOKEN
+
+echo "Launching surprisal GlobalPIQA-test for Portuguese------------------"
+python3 eval_surprisal.py --model $MODEL --cache $CACHE_DIR --dataset globalpiqa --lang pt --token $HF_TOKEN
