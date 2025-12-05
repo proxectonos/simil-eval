@@ -9,8 +9,8 @@ from excel_tools import collect_results_from_folder, prettify_excel, save_groupe
 # ----------------------------------------------------------------------
 # CONFIG
 # ----------------------------------------------------------------------
-RESULTS_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/logs_surprisal"
-OUTPUT_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/results_excel"
+RESULTS_DIR = "../logs_surprisal"
+OUTPUT_DIR = "../results_excel"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 

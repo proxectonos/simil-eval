@@ -9,8 +9,8 @@ from tqdm.auto import tqdm
 # ----------------------------------------------------------------------
 # CONFIG
 # ----------------------------------------------------------------------
-RESULTS_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/logs_similarity"
-OUTPUT_DIR = "/mnt/netapp1/Proxecto_NOS/adestramentos/simil-eval/results_excel"
+RESULTS_DIR = "../logs_similarity"
+OUTPUT_DIR = "../results_excel"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 DATASETS = ["openbookqa", "xstorycloze", "truthfulqa", "belebele", "veritasqa"]
