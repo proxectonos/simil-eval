@@ -252,10 +252,13 @@ def generate_completions(task:SimilarityTask, evaluated_model:EvaluatingModel, r
     model.to(evaluated_model.device)
 
     if evaluated_model.model_id in ["irlab-udc/Llama-3.1-8B-Instruct-Galician","meta-llama/Llama-3.1-8B-Instruct"]:
+        logging.info("Using no pad generation function for the model...")
         generation_function = generate_answers_no_pad
-    elif tokenizer.chat_template:
-            generation_function = generate_answer_with_template
+    elif tokenizer.chat_template and evaluated_model.model_id not in ["HiTZ/gl_Llama-3.1-8B","HiTZ/gl_Qwen3-8B-Base"]:
+        logging.info("Using chat template generation function for the model...")
+        generation_function = generate_answer_with_template
     else:
+        logging.info("Using standard CPT generation function for the model...")
         generation_function = generate_answers
 
     with open(examples_file,"r") as csv_file:
