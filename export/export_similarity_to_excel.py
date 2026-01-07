@@ -31,16 +31,31 @@ def parse_filename(filename):
     name = filename.replace(".txt", "")
     parts = name.split("_")
 
-    dataset_idx = next((i for i, p in enumerate(parts) if p in DATASETS), None)
-    lang_idx = next((i for i, p in enumerate(parts) if p in LANGS), None)
-    if dataset_idx is None or lang_idx is None:
+    # dataset_idx = next((i for i, p in enumerate(parts) if p in DATASETS), None)
+    # lang_idx = next((i for i, p in enumerate(parts) if p in LANGS), None)
+    # if dataset_idx is None or lang_idx is None:
+    #     return None
+
+    # date = parts[1]
+    # model = "_".join(parts[2:dataset_idx])
+    # dataset = parts[dataset_idx]
+    # lang = parts[lang_idx]
+
+    datasets_joined = "|".join(DATASETS)
+    r = fr'(?P<function>\w+)_(?P<date>\d+-\d+-\d+)_(?P<model>.+)_(?P<dataset>{datasets_joined})_(?P<lang>\w{{1,4}})_(?P<extra>.+)_(?P<logtype>\w+)'
+    m = re.match(r, name)
+
+    if m:
+        date = m.group("date")
+        model = m.group("model")
+        dataset = m.group("dataset")
+        lang = m.group("lang")
+        extra = m.group("extra")
+        logtype = m.group("logtype")
+    else:
         return None
 
-    date = parts[1]
-    model = "_".join(parts[2:dataset_idx])
-    dataset = parts[dataset_idx]
-    lang = parts[lang_idx]
-    return date, model, dataset, lang
+    return date, model, dataset, lang, extra, logtype
 
 
 def parse_metrics(text):
@@ -187,7 +202,7 @@ def process_all():
         if not parsed:
             continue
 
-        date, model, dataset, lang = parsed
+        date, model, dataset, lang, _, _ = parsed
         with open(os.path.join(RESULTS_DIR, fname), "r", encoding="utf-8") as f:
             text = f.read()
 
