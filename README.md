@@ -12,7 +12,7 @@ This repository accompanies the paper [Continued Pretraining and Interpretabilit
 2. [Setup](#2-setup)  
 3. [Quick Start (Local Usage)](#3-quick-start-local-usage)  
 4. [Cluster Deployment (SLURM)](#4-cluster-deployment-slurm)  
-5. [Available Datasets & Supported Metrics](#5-available-datasets--supported-metrics)  
+5. [Available Tasks, Datasets & Supported Metrics](#5-available-tasks-datasets--supported-metrics)  
 6. [Exporting Results](#6-exporting-results)  
 7. [Citation](#7-citation)
 
@@ -29,18 +29,14 @@ Simil-Eval evaluates LLMs from two complementary perspectives:
 
 Surprisal-based metrics evaluate how *expected* a given text is according to a language model.
 
-#### Surprisal ($S(x)$) ([**Code**](https://github.com/kanishkamisra/minicons),[**Paper**](https://arxiv.org/pdf/2203.13112))
+#### Surprisal ([**Code**](https://github.com/kanishkamisra/minicons),[**Paper**](https://arxiv.org/pdf/2203.13112))
 
-Surprisal measures the negative log-probability of a token sequence. This metric is especially useful for **linguistic acceptability** and **commonsense reasoning** tasks.
-
-*Interpretation*:
-  - Lower values → the model finds the text natural or expected
-  - Higher values → the model is unfamiliar with the language, structure, or facts
+Surprisal `S(x)` measures the negative log-probability of a token sequence. Lower values mean that the model recognises the text as natural or expected. Higher values indicate that the model is unfamiliar with the language, structure, or facts. m This metric is particularly useful for **linguistic acceptability** and **commonsense reasoning** tasks.
 
 
 #### Difsur (Differential Surprisal)
 
-A novel metric introduced in Simil-Eval to explicitly compare correct vs. incorrect alternatives:
+A novel metric introduced in Simil-Eval to explicitly compare correct vs. incorrect alternatives of the same fact
 
 $$\text{difsur} = \frac{S(x_{na}) - S(x_a)}{\max\{S(x_a), S(x_{na})\}} \times 100$$
 
@@ -48,9 +44,7 @@ where:
 - $S(x_a)$: surprisal of the acceptable / correct text
 - $S(x_{na})$: surprisal of the non-acceptable / incorrect text
 
-*Interpretation*:
-  - Higher values indicate a stronger model preference for the correct option
-  - Values near zero suggest weak discrimination
+Higher values in this metric indicate a stronger model preference for the correct option, whereas values near zero suggest weak discrimination.
 
 ---
 
