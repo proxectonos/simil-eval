@@ -42,7 +42,7 @@ def parse_filename(filename):
     # lang = parts[lang_idx]
 
     datasets_joined = "|".join(DATASETS)
-    r = fr'(?P<function>\w+)_(?P<date>\d+-\d+-\d+)_(?P<model>.+)_(?P<dataset>{datasets_joined})_(?P<lang>\w{{1,4}})_(?P<extra>.+)_(?P<logtype>\w+)'
+    r = fr'(?P<function>\w+)_(?P<date>\d+-\d+-\d+)_(?P<model>.+)_(?P<dataset>(?P<dataset_basename>{datasets_joined})_*(?P<mc_metric>mc1|mc2)*)_(?P<lang>\w{{1,4}})_(?P<extra>.+)_(?P<logtype>\w+)'
     m = re.match(r, name)
 
     if m:
