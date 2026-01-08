@@ -69,10 +69,8 @@ def summarize_similarity_from_path(output_dir, max_col_width=50):
 
         accs = [df[sheet][metrics] for sheet in df.keys()]
 
-        column_order = ["belebele", "openbookqa", "veritasqa", "truthfulqa", "xstorycloze"]
-
         concat_df = pd.concat(accs, keys=df.keys(), axis=1).dropna(how="all")
-        concat_df = concat_df.reindex(columns=column_order, level=0)
+        concat_df = concat_df.sort_index(axis=1, level=0)
         styled_df = concat_df.style.highlight_max(axis=0, color="lightgreen").format(precision=3)
 
         return styled_df
