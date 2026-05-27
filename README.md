@@ -13,8 +13,9 @@ This repository accompanies the paper [Continued Pretraining and Interpretabilit
 3. [Quick Start (Local Usage)](#3-quick-start-local-usage)  
 4. [Cluster Deployment (SLURM)](#4-cluster-deployment-slurm)  
 5. [Available Tasks, Datasets & Supported Metrics](#5-available-tasks-datasets--supported-metrics)  
-6. [Exporting Results](#6-exporting-results)  
-7. [Citation](#7-citation)
+6. [Extending Simil-Eval](#6-extending-simil-eval)  
+7. [Exporting Results](#7-exporting-results)  
+8. [Citation](#8-citation)
 
 ---
 
@@ -227,7 +228,30 @@ sh execute_eval_surprisal.sh
 | Global PIQA | [global-piqa_gl](https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel/viewer/glg_latn) | [global-piqa_eng](https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel/viewer/eng_latn) | [global-piqa_cat](https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel/viewer/cat_latn) | [global-piqa_spa-spai](https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel/viewer/spa_latn_spai) | [global-piqa_por-port](https://huggingface.co/datasets/mrlbenchmarks/global-piqa-nonparallel/viewer/por_latn_port) |
 ---
 
-## 6. Exporting Results
+## 6. Extending Simil-Eval
+
+Simil-Eval is designed to be easily extensible. You can add custom metrics, datasets, and tasks to suit your evaluation needs.
+
+### Documentation
+
+For new developers and extensions, we provide:
+
+- **[DEVELOPER_QUICKSTART.md](DEVELOPER_QUICKSTART.md)** ⭐ **NEW? START HERE**
+  - Quick end-to-end evaluation example
+  - Project structure overview
+  - What file to edit for common tasks
+  - Quick reference guide
+
+We also provide a comprehensive guide for extending the framework:
+
+- **[EXTENDING_SIMIL_EVAL.md](EXTENDING_SIMIL_EVAL.md)** ⭐ **START HERE**
+  - Complete guide to adding new metrics and datasets
+  - Step-by-step instructions for integrating custom similarity metrics
+  - Instructions for adding new evaluation datasets
+  - How to implement surprisal-based tasks
+  - Testing and validation procedures
+
+## 7. Exporting Results
 
 Convert raw JSON outputs into Excel summaries.
 
@@ -243,7 +267,7 @@ Outputs (located in `$OUTPUT_DIR/`):
 - `similarity_summary.xlsx`
 - `surprisal_summary.xlsx`
 
-## 7. Citation
+## 8. Citation
 
 If you use Simil-Eval or the Galician datasets, please cite:
 
