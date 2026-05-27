@@ -234,17 +234,14 @@ Simil-Eval is designed to be easily extensible. You can add custom metrics, data
 
 ### Documentation
 
-For new developers and extensions, we provide:
-
-- **[DEVELOPER_QUICKSTART.md](DEVELOPER_QUICKSTART.md)** ⭐ **NEW? START HERE**
+- **[DEVELOPER_QUICKSTART.md](DEVELOPER_QUICKSTART.md)** 
   - Quick end-to-end evaluation example
   - Project structure overview
   - What file to edit for common tasks
   - Quick reference guide
 
-We also provide a comprehensive guide for extending the framework:
 
-- **[EXTENDING_SIMIL_EVAL.md](EXTENDING_SIMIL_EVAL.md)** ⭐ **START HERE**
+- **[EXTENDING_SIMIL_EVAL.md](EXTENDING_SIMIL_EVAL.md)** 
   - Complete guide to adding new metrics and datasets
   - Step-by-step instructions for integrating custom similarity metrics
   - Instructions for adding new evaluation datasets
