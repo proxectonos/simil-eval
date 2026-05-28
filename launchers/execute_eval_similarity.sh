@@ -8,33 +8,26 @@ MODELS=(
 # "BSC-LT/salamandra-2b"
 # "BSC-LT/salamandra-7b"
 #"BSC-LT/salamandra-7b-instruct"
-#  "/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_LR_1e4_10-28-25_18-55"
-#  "/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_LR_1e5_10-28-25_18-56"
-#  "/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_LR_1e6_10-29-25_03-08"
-#  "/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_LR_2e5"
-#"/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_LR_2e6_11-06-25_09-44"
 #"langtech-languagemodeling/salamandra-7b-dev"
-#"/mnt/netapp1/Proxecto_NOS/checkpoints_RES/CPT_Carvalho-SalamandraInstruct_v1_11-12-25_11-49"
 # "proxectonos/Llama-3.1-Carballo-Instr3"
 # "Nos-PT/Llama-Carvalho-PT-GL"
-# "proxectonos/Llama-3.1-Carballo"
-"nos-dev/Legal-Carballo-SalamandraInstruct_v1"
+"proxectonos/Llama-3.1-Carballo"
 )
 
 DATASETS=(
     "openbookqa"
     "belebele"
     "veritasqa_mc1"
-    # #"summarization"
+    "summarization"
     "xstorycloze"
     "truthfulqa_mc1"
 )
 
 LANGUAGES=(
-    #"gl"
+    "gl"
     "cat"
     "en"
-    #"es"
+    "es"
     "pt"
 )
 
